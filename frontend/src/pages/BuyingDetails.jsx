@@ -4,7 +4,7 @@ import axios from 'axios';
 import { CreditCard, Home, Landmark, MapPin, Phone, Wallet, CalendarDays, Package, MailIcon } from 'lucide-react';
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
-import * as jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 const Confetti = () => (
   <div className="confetti">
@@ -165,7 +165,7 @@ const BuyingDetails = () => {
         return handleSessionExpiration();
       }
       try {
-        const { exp } = jwtDecode.default(token)
+        const { exp } = jwtDecode(token);
         if (Date.now() >= exp * 1000) {
           return handleSessionExpiration();
         }
