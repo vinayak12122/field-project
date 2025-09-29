@@ -2,9 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import axios from 'axios';
 import { CreditCard, Home, Landmark, MapPin, Phone, Wallet, CalendarDays, Package, MailIcon } from 'lucide-react';
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
+
+const Confetti = () => (
+  <div className="confetti">
+    {[...Array(30)].map((_, i) => (
+      <div
+        key={i}
+        className="confetti-piece"
+        style={{
+          left: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random()}s`,
+          background: `hsl(${Math.random() * 360}, 80%, 60%)`,
+        }}
+      />
+    ))}
+    <style>
+      {`
+        .confetti {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0; left: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        .confetti-piece {
+          position: absolute;
+          width: 8px;
+          height: 16px;
+          border-radius: 2px;
+          opacity: 0.8;
+          animation: confetti-fall 1.5s linear forwards;
+        }
+        @keyframes confetti-fall {
+          0% { top: -20px; opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}
+    </style>
+  </div>
+);
 
 const SuccessAnimation = () => (
   <div className="flex flex-col items-center justify-center h-64">
@@ -52,59 +92,17 @@ const SuccessAnimation = () => (
             stroke-dashoffset: 0;
           }
         }
-      `}
+        `}
     </style>
-    {/* Confetti effect */}
     <div className="absolute inset-0 pointer-events-none">
       <Confetti />
     </div>
   </div>
 );
 
-// Simple confetti effect
-const Confetti = () => (
-  <div className="confetti">
-    {[...Array(30)].map((_, i) => (
-      <div
-        key={i}
-        className="confetti-piece"
-        style={{
-          left: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random()}s`,
-          background: `hsl(${Math.random() * 360}, 80%, 60%)`,
-        }}
-      />
-    ))}
-    <style>
-      {`
-        .confetti {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0; left: 0;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        .confetti-piece {
-          position: absolute;
-          width: 8px;
-          height: 16px;
-          border-radius: 2px;
-          opacity: 0.8;
-          animation: confetti-fall 1.5s linear forwards;
-        }
-        @keyframes confetti-fall {
-          0% { top: -20px; opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-      `}
-    </style>
-  </div>
-);
-
 
 const BuyingDetails = () => {
-  const { cart, clearCart, isLoggedIn, token, parsePrice ,isGuest} = useCart();
+  const { cart, clearCart, isLoggedIn, token, parsePrice, isGuest } = useCart();
   const [form, setForm] = useState({
     room: '',
     landmark: '',
@@ -114,7 +112,7 @@ const BuyingDetails = () => {
     phone: '',
     altPhone: '',
     instructions: '',
-    email: '', 
+    email: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -153,7 +151,7 @@ const BuyingDetails = () => {
     if (!form.pincode || form.pincode.length !== 6) newErrors.pincode = 'Enter valid 6 digit pincode';
     if (form.phone.replace(/\s/g, '').length !== 10) newErrors.phone = 'Enter valid 10 digit phone';
     if (form.altPhone && form.altPhone.replace(/\s/g, '').length !== 10) newErrors.altPhone = 'Enter valid 10 digit phone';
-    if (!isLoggedIn && !form.email) newErrors.email = 'Email required for guest checkout'; 
+    if (!isLoggedIn && !form.email) newErrors.email = 'Email required for guest checkout';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -288,7 +286,7 @@ const BuyingDetails = () => {
     }
   }, [isLoggedIn, success]);
 
-  
+
   if (success) {
     return (
       <div className="mt-10 max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-xl animate-fade-in">
