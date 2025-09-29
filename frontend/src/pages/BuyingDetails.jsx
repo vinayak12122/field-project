@@ -162,14 +162,13 @@ const BuyingDetails = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    if(isLoggedIn){
-      if(!token){
+    if (isLoggedIn) {
+      if (!token) {
         return handleSessionExpiration();
-        return
       }
-      try{
-        const {exp} = jwtDecode(token);
-        if(Date.now()>=exp * 1000){
+      try {
+        const { exp } = jwtDecode(token);
+        if (Date.now() >= exp * 1000) {
           return handleSessionExpiration();
         }
       } catch (error) {
@@ -265,9 +264,14 @@ const BuyingDetails = () => {
     console.error('Order submission failed:', error);
 
     if (error.response?.status === 401) {
-      handleSessionExpiration();
+      if (isLoggedIn) {
+        handleSessionExpiration(); // only redirect if logged-in session expired
+      } else {
+        toast.error('Guest checkout failed. Please try again.');
+      }
       return;
     }
+
 
     if (!isLoggedIn && error.response?.status === 403) {
       toast.error('Guest orders require email verification');
