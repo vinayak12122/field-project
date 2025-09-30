@@ -108,21 +108,21 @@ const Shop = () => {
                         <button
                             onClick={() => goToPage(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 rounded bg-white disabled:opacity-50 hover:bg-gray-300 transition"
+                            className="px-4 py-2 rounded bg-fuchsia-950 disabled:opacity-60 hover:bg-fuchsia-500 transition"
                         >
-                            <ChevronLeftIcon/>
+                            <ChevronLeftIcon color="white"/>
                         </button>
 
-                        <span className="px-4 py-2 bg-fuchsia-500 text-white rounded">
+                        <span className="px-4 py-2 bg-white/40 text-gray-950 rounded">
                             {currentPage} / {totalPages}
                         </span>
 
                         <button
                             onClick={() => goToPage(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 rounded bg-white disabled:opacity-50 hover:bg-gray-300 transition"
+                            className="px-4 py-2 rounded bg-fuchsia-950 disabled:opacity-50 hover:bg-fuchsia-500 transition"
                         >
-                            <ChevronRightIcon/>
+                            <ChevronRightIcon color="white"/>
                         </button>
                     </div>
                 </>

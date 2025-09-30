@@ -26,7 +26,7 @@ const Header = ({ isMobile }) => {
   const [showCoins, setShowCoins] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [userHovered, setUserHovered] = useState(false);
-  const [searchOpen,setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -41,8 +41,8 @@ const Header = ({ isMobile }) => {
         ...datasets.carpets.map((p) => ({ ...p, category: "carpets" })),
         ...datasets.rooftops.map((p) => ({ ...p, category: "rooftops" })),
         ...datasets.doormats.map((p) => ({ ...p, category: "doormats" })),
-        ...datasets.interiors.map((p) => ({...p, category:"interiors"})),
-        ...datasets.sofa.map((p) => ({...p, category:"sofa"})),
+        ...datasets.interiors.map((p) => ({ ...p, category: "interiors" })),
+        ...datasets.sofa.map((p) => ({ ...p, category: "sofa" })),
       ];
 
       const filtered = allProducts.filter((p) =>
@@ -61,12 +61,22 @@ const Header = ({ isMobile }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("accessToken");
-        const res = await api.get("/me", { withCredentials: true }); 
+        const res = await api.get("/me", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
         setUser(res.data);
       } catch (err) {
+        console.error("User fetch failed:", err);
         setUser(null);
+        localStorage.removeItem("accessToken");
       }
     };
     fetchUser();
@@ -244,7 +254,7 @@ const Header = ({ isMobile }) => {
           <div
             className="flex justify-center ml-10 hover:bg-gray-700/10 py-2 rounded-full cursor-pointer"
             title="Search"
-            onClick={()=>setSearchOpen(true)}
+            onClick={() => setSearchOpen(true)}
           >
             <Search size={20} color={`${isHome ? (scrolled || hovered ? "black" : "white") : "black"}`} />
           </div>
@@ -336,7 +346,7 @@ const Header = ({ isMobile }) => {
 
       {
         cart.length >= 1 && (
-          <p className={`${isLoggedIn ? "lg:right-[9%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[11%] lg:top-[10%] md:right-[6.50%] md:top-[10%]"}  right-[15%] top-[25%]  sm:right-[6%] sm:top-[20%]  absolute bg-red-600 px-2.5 rounded-full`}>
+          <p className={`${isLoggedIn ? "lg:right-[9%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[11%] lg:top-[10%] md:right-[6.50%] md:top-[10%]"}  right-[15%] top-[25%]  sm:right-[6%] sm:top-[20%]  absolute bg-red-600 text-white font-bold px-2.5 rounded-full`}>
             {cart.length}
           </p>
         )
@@ -391,7 +401,7 @@ const Header = ({ isMobile }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
-                      >
+                    >
                       1234567890
                     </a>
                   </span>
@@ -400,7 +410,7 @@ const Header = ({ isMobile }) => {
                     <a
                       href="tel:+911234567890"
                       className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
-                      >
+                    >
                       +91 1234567890
                     </a>
                   </span>
@@ -408,7 +418,7 @@ const Header = ({ isMobile }) => {
                     <Mail size={13} /> :
                     <a
                       href="mailto:support@nayaanenterprise.com"
-                    className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
+                      className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
                     >
                       ne@gmail.com
                     </a>

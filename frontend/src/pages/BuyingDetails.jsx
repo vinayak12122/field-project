@@ -102,7 +102,7 @@ const SuccessAnimation = () => (
 
 
 const BuyingDetails = () => {
-  const { cart, clearCart, isLoggedIn, token, parsePrice, isGuest } = useCart();
+  const { cart, clearCart, isLoggedIn, isGuest, token, parsePrice } = useCart();
   const [form, setForm] = useState({
     room: '',
     landmark: '',
@@ -160,7 +160,7 @@ const BuyingDetails = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    if (isLoggedIn) {
+    if (isLoggedIn && !isGuest) {
       if (!token) {
         return handleSessionExpiration();
       }
@@ -204,24 +204,26 @@ const BuyingDetails = () => {
         email: form.email || null,
       },
       paymentMethod: "Cash on Delivery",
-      isGuest: !isLoggedIn,
+      isGuest: isGuest,
     };
 
     try {
-      if (!isLoggedIn) {
+      let res;
+      if (isLoggedIn && !isGuest) {
+        res = await axios.post(
+          "https://field-project-6hka.onrender.com/api/orders/create",
+          orderData,
+          {
+            headers:{Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          }
+        );
+      } 
+      if(isGuest){
         saveGuestOrderLocally(orderData);
+        res = await axios.post("https://field-project-6hka.onrender.com/api/orders/create",orderData
+        ); 
       }
-
-      // Send order to backend
-      const res = await axios.post(
-        "https://field-project-6hka.onrender.com/api/orders/create",
-        orderData,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-          withCredentials: true,
-        }
-      );
-
       handleOrderSuccess(res.data.message);
     } catch (error) {
       handleOrderError(error);

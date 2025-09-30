@@ -234,7 +234,7 @@ const MyOrder = () => {
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <CalendarDays size={18} className="text-sky-900" />
-                                    <span><strong>Est. Delivery:</strong> {getEstimatedDelivery(orderDateStr)}</span>
+                                    <span><strong>Est. Delivery:</strong> {getEstimatedDelivery(orderDate)}</span>
                                 </div>
                             </div>
 

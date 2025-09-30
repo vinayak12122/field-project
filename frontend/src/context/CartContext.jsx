@@ -14,6 +14,7 @@ export const CartProvider = ({ children }) => {
     );
     const [token, setToken] = useState(() => localStorage.getItem("accessToken"));
 
+    const isGuest = !isLoggedIn;
 
     useEffect(() => {
         const syncToken = () => {
@@ -180,6 +181,7 @@ export const CartProvider = ({ children }) => {
                 parsePrice,
                 isUnitPrice,
                 isLoggedIn,
+                isGuest,
                 setIsLoggedIn,
                 setToken,
                 clearCart,
