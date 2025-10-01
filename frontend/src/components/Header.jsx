@@ -414,7 +414,7 @@ const Header = ({ isMobile }) => {
       {cart.length > 0 && (
         <p
           onClick={() => navigate("/cart")}
-          className={`absolute flex justify-center items-center w-5 h-5 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
+          className={`absolute flex justify-center items-center w-5 ${isMobile ? "bg-none":"bg-red-600 "} h-5 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
       ${isLoggedIn ? "lg:right-[14.50%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
       right-[14.50%] top-[25.60%] sm:right-[6%] sm:top-[20%] 
        px-2.5`}
@@ -517,17 +517,39 @@ const Header = ({ isMobile }) => {
                     {isExpandable && <span className={`transition-transform ${isOpen ? "rotate-90" : ""}`}>›</span>}
                   </button>
 
-                  {item.label === "Contact Us" && showContact && (
-                    <div className="ml-6 mt-3 space-y-2 text-sm text-gray-700 animate-fadeIn">
-                      <a href="https://wa.me/919876543210" target="_blank" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">WhatsApp: 1234567890</a>
-                      <a href="tel:+911234567890" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">Call: +91 1234567890</a>
-                      <a href="mailto:support@nayaanenterprise.com" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">Email: ne@gmail.com</a>
+                  {item.label === "Contact Us" && (
+                    <div className={`ml-6 mt-3 space-y-2 text-sm text-gray-700 overflow-hidden
+  ${showContact ? "max-h-96 animate-slideFade show" : "max-h-0 animate-slideFade"}`}>
+                      <a
+                        href="https://wa.me/919876543210"
+                        target="_blank"
+                        className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
+                      >
+                        WhatsApp: 1234567890
+                      </a>
+                      <a
+                        href="tel:+911234567890"
+                        className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
+                      >
+                        Call: +91 1234567890
+                      </a>
+                      <a
+                        href="mailto:support@nayaanenterprise.com"
+                        className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
+                      >
+                        Email: ne@gmail.com
+                      </a>
                     </div>
                   )}
 
-                  {item.label === "Winning Coins" && showCoins && (
-                    <div className="ml-6 mt-3 space-y-2 text-sm text-gray-700 animate-fadeIn">
-                      <p>Your Coins: <span className="font-bold text-orange-600">0</span></p>
+                  {item.label === "Winning Coins" && (
+                    <div
+                      className={`ml-6 mt-3 space-y-2 text-sm text-gray-700 transition-all duration-500 overflow-hidden 
+    ${showCoins ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
+                    >
+                      <p>
+                        Your Coins: <span className="font-bold text-orange-600">0</span>
+                      </p>
                       <p>Collect coins by booking and redeem for discounts soon!</p>
                     </div>
                   )}

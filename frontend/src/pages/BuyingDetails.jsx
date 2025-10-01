@@ -352,7 +352,7 @@ const BuyingDetails = () => {
       <div className="fixed bottom-0 left-0 right-0 flex justify-center p-4">
         <img
           src="logo.png"
-          className="w-60 h-auto max-h-50"
+          className="w-50 h-auto max-h-40"
           alt="Company Logo"
         />
       </div>

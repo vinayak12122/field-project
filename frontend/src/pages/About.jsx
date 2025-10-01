@@ -60,7 +60,7 @@ const About = () => {
 
     return (
         <div className="font-inter antialiased text-gray-800">
-            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2"
+            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2 cursor-pointer"
                 onClick={() => navigate('/')}
             >
                 <ArrowLeft z={1000} size={"30px"} color="white" />
@@ -330,15 +330,15 @@ const About = () => {
 
             {/* FOOTER STRIP */}
             <footer className="bg-gray-900 text-gray-300 py-6">
-                <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="max-w-7xl mx-auto px-6 flex justify-center items-center gap-4">
                     <div className="text-sm text-center md:text-left">
-                        © {new Date().getFullYear()} Nayaan Enterprise — Quality home furnishings since 2000
+                        © {new Date().getFullYear()} Sleep Sound — Quality home furnishings since 2000
                     </div>
-                    <div className="flex flex-wrap justify-center gap-6">
+                    {/* <div className="flex flex-wrap justify-center gap-6">
                         <a className="text-sm hover:text-white" href="/privacy">Privacy</a>
                         <a className="text-sm hover:text-white" href="/terms">Terms</a>
                         <a className="text-sm hover:text-white" href="/contact">Contact</a>
-                    </div>
+                    </div> */}
                 </div>
             </footer>
         </div>

@@ -31,7 +31,7 @@ const App = () => {
 
   const location = useLocation();
 
-  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy','/securitypolicy'].includes(location.pathname);
+  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy','/securitypolicy','/support','/help'].includes(location.pathname);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

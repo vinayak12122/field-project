@@ -24,6 +24,7 @@ const MyOrder = () => {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            // console.log("📌 fetchOrders called");
             setLoading(true);
             try {
                 let allOrders = [];
@@ -37,14 +38,20 @@ const MyOrder = () => {
                         createdAt: order.date || new Date().toISOString()
                     }));
 
-                // 2. Get user orders from backend if authenticated
+                // console.log("Auth state:", { isLoggedIn, token, userId });
+    
                 if (isLoggedIn && token && userId) {
                     try {
-                        const res = await api.get("/orders/my", {
-                            headers: { Authorization: `Bearer ${token}` },
-                        });
+                        console.log("📌 Making API call with token:", token);
 
-                        const userOrders = (res.data.orders || []).map(order => ({
+                        const res = await api.get("/orders/my");
+
+                        // console.log("Fetched orders:", res.data);
+
+                        // Some APIs return { orders: [...] }, others return just [...]
+                        const userOrdersRaw = Array.isArray(res.data) ? res.data : res.data.orders || [];
+
+                        const userOrders = userOrdersRaw.map(order => ({
                             ...order,
                             isGuest: false,
                             createdAt: order.createdAt || order.date || new Date().toISOString()
@@ -52,11 +59,10 @@ const MyOrder = () => {
 
                         allOrders = [...userOrders, ...guestOrders];
                     } catch (error) {
-                        console.error("Error fetching user orders:", error);
+                        // console.error("❌ Error fetching user orders:", error.response?.data || error.message);
                         if (error.response?.status === 401) {
                             handleSessionExpiration();
                         }
-                        // Fallback to just guest orders if backend fails
                         allOrders = [...guestOrders];
                         toast.error("Couldn't fetch orders from server. Showing local orders only.");
                     }
@@ -73,7 +79,7 @@ const MyOrder = () => {
 
                 setOrders(allOrders);
             } catch (error) {
-                console.error("Error processing orders:", error);
+                // console.error("Error processing orders:", error);
                 toast.error("Failed to load orders");
             } finally {
                 setLoading(false);

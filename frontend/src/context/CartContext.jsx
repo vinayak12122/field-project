@@ -1,173 +1,23 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "../api"; // 👈 centralized axios instance
+import api from "../api";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-    const [cart, setCart] = useState(() => {
-        const storedCart = localStorage.getItem("guestCart");
-        return storedCart ? JSON.parse(storedCart) : [];
-    });
-    const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(
         () => !!localStorage.getItem("accessToken")
     );
     const [token, setToken] = useState(() => localStorage.getItem("accessToken"));
+    const [userId, setUserId] = useState(() => localStorage.getItem("user"));
+
+    const [cart, setCart] = useState(() => {
+        const storedCart = localStorage.getItem("guestCart");
+        return !isLoggedIn && storedCart ? JSON.parse(storedCart) : [];
+    });
+    const [isLoading, setIsLoading] = useState(true);
 
     const isGuest = !isLoggedIn;
 
-    useEffect(() => {
-        const syncToken = () => {
-            const storedToken = localStorage.getItem("accessToken");
-            if (storedToken && storedToken !== token) {
-                setToken(storedToken);
-                setIsLoggedIn(true);
-            }
-            if (!storedToken) {
-                setToken(null);
-                setIsLoggedIn(false);
-            }
-        };
-
-        syncToken();
-
-        window.addEventListener("storage", syncToken);
-
-        return () => window.removeEventListener("storage", syncToken);
-    }, [token]);
-
-    useEffect(() => {
-        const loadCart = async () => {
-            setIsLoading(true);
-            try {
-                if (isLoggedIn && token) {
-                    const res = await api.get("/cart", {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    setCart(res.data);
-                } else {
-                    const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
-                    setCart(guestCart);
-                }
-            } catch (error) {
-                setCart([]);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadCart();
-    }, [isLoggedIn, token]);
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            localStorage.setItem("guestCart", JSON.stringify(cart));
-        }
-    }, [cart, isLoggedIn]);
-
-    const addToCart = async (product) => {
-        const payload = {
-            productId: String(product.id || product._id), 
-            title: product.title || "",
-            price: Number(
-                typeof product.price === "string"
-                    ? product.price.replace(/[₹,]/g, "").split("/")[0]
-                    : product.price
-            ), 
-            img: product.img || "",
-            quantity: 1,
-        };
-
-        setCart((prev) => {
-            const existing = prev.find((item) => item.productId === payload.productId);
-            if (existing) {
-                return prev.map((i) =>
-                    i.productId === payload.productId
-                        ? { ...i, quantity: i.quantity + 1 }
-                        : i
-                );
-            }
-            return [
-                ...prev,
-                {
-                    productId: product.id,
-                    id: product.id,         
-                    category: product.category, 
-                    title: product.title,
-                    price: product.price,
-                    img: product.img,
-                    quantity: 1,
-                },]
-        });
-
-        if (isLoggedIn) {
-            try {
-                await api.post("/cart", payload, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-            } catch (error) {
-                console.error("❌ Error adding to cart:", error.response?.data || error);
-            }
-        }
-    };
-
-
-    // 🔹 Remove item from cart
-    const removeFromCart = async (id) => {
-        if (isLoggedIn && token) {
-            try {
-                const res = await api.delete(`/cart/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setCart(res.data);
-            } catch (error) {
-                console.error("Error removing item:", error);
-            }
-        } else {
-            const newCart = cart.filter((item) => item.productId !== id);
-            setCart(newCart);
-        }
-    };
-
-    const updateQuantity = async (productId, change) => {
-        const newCart = cart.map(item =>
-            item.productId === productId
-                ? { ...item, quantity: Math.max(1, item.quantity + change) }
-                : item
-        );
-        setCart(newCart);
-
-        if (isLoggedIn) {
-            try {
-                const item = newCart.find(i => i.productId === productId);
-                await api.put(`/cart/${productId}`, { quantity: item.quantity }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-            } catch (error) {
-                console.error("Error updating quantity:", error);
-            }
-        }
-    };
-
-    // 🔹 Clear cart
-    const clearCart = async () => {
-        if (isLoggedIn && token) {
-            try {
-                // You can implement DELETE /cart/clear on backend
-                await api.delete("/cart/clear", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setCart([]);
-            } catch (error) {
-                console.error("Error clearing cart:", error);
-            }
-        } else {
-            localStorage.removeItem("guestCart");
-            setCart([]);
-        }
-    };
-
-    // 🔹 Helpers
     const parsePrice = (price) => {
         if (typeof price === "number") return price;
         if (typeof price === "string") {
@@ -180,6 +30,192 @@ export const CartProvider = ({ children }) => {
     const isUnitPrice = (price) =>
         typeof price === "string" && price.includes("/");
 
+
+    const reloadCart = async () => {
+        if (isLoggedIn && token) {
+            try {
+                const res = await api.get("/cart", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setCart(res.data);
+            } catch (error) {
+                setCart([]);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const syncAuth = () => {
+            const storedToken = localStorage.getItem("accessToken");
+            const storedUserId = localStorage.getItem("userId");
+
+            if (storedToken && storedToken !== token) {
+                setToken(storedToken);
+                setIsLoggedIn(true);
+                setUserId(storedUserId);
+            }
+            if (!storedToken) {
+                setToken(null);
+                setIsLoggedIn(false);
+                setUserId(null);
+            }
+        };
+
+        syncAuth();
+
+        window.addEventListener("storage", syncAuth);
+
+        return () => window.removeEventListener("storage", syncAuth);
+    }, [token]);
+
+    useEffect(() => {
+        let isCancelled = false;
+        const loadCart = async () => {
+            setIsLoading(true);
+            try {
+                if (isLoggedIn && token) {
+                    const res = await api.get("/cart", {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (!isCancelled) {
+                        setCart(res.data);
+                        localStorage.removeItem("guestCart");
+                    }
+                } else {
+                    const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+                    if (!isCancelled) {
+                        setCart(guestCart);
+                    }
+                }
+            } catch (error) {
+                if (!isCancelled) {
+                    setCart([]);
+                }
+            } finally {
+                if (!isCancelled) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        loadCart();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [isLoggedIn, token]);
+
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            localStorage.setItem("guestCart", JSON.stringify(cart));
+        }
+    }, [cart, isLoggedIn]);
+
+
+    const addToCart = async (product) => {
+        const productId = String(product.id || product._id);
+        const normalizedPrice = parsePrice(product.price);
+
+        const newItem = {
+            productId: productId,
+            title: product.title || "",
+            price: normalizedPrice,
+            img: product.img || "",
+            quantity: 1,
+            category: product.category,
+        };
+
+        setCart((prevCart) => {
+            const existingItemIndex = prevCart.findIndex((item) => item.productId === productId);
+
+            if (existingItemIndex > -1) {
+                return prevCart.map((item, index) =>
+                    index === existingItemIndex
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+            } else {
+                return [...prevCart, newItem];
+            }
+        });
+
+        if (isLoggedIn) {
+            try {
+                await api.post("/cart", { productId: productId, quantity: 1 }, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            } catch (error) {
+                console.error("Error adding to cart. Rolling back local change:", error.response?.data || error);
+                reloadCart();
+            }
+        }
+    };
+
+
+    const removeFromCart = async (productId) => {
+        const idToRemove = String(productId);
+
+        setCart((prevCart) => prevCart.filter((item) => item.productId !== idToRemove));
+
+        if (isLoggedIn && token) {
+            try {
+                await api.delete(`/cart/${idToRemove}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            } catch (error) {
+                console.error("Error removing item. Rolling back:", error.response?.data || error);
+                reloadCart();
+            }
+        }
+    };
+
+    const updateQuantity = async (productId, change) => {
+        const idToUpdate = String(productId);
+        let updatedItem = null;
+
+        setCart(prevCart => {
+            const newCart = prevCart.map(item => {
+                if (item.productId === idToUpdate) {
+                    const newQuantity = Math.max(1, item.quantity + change);
+                    updatedItem = { ...item, quantity: newQuantity };
+                    return updatedItem;
+                }
+                return item;
+            });
+            return newCart;
+        });
+
+        if (isLoggedIn && updatedItem) {
+            try {
+                await api.put(`/cart/${idToUpdate}`, { quantity: updatedItem.quantity }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } catch (error) {
+                console.error("Error updating quantity. Rolling back:", error.response?.data || error);
+                reloadCart();
+            }
+        }
+    };
+
+    const clearCart = async () => {
+        setCart([]);
+        localStorage.removeItem("guestCart");
+
+        if (isLoggedIn && token) {
+            try {
+                await api.delete("/cart/clear", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            } catch (error) {
+                console.error("Error clearing cart. Reloading...", error.response?.data || error);
+                reloadCart();
+            }
+        }
+    };
+
     return (
         <CartContext.Provider
             value={{
@@ -188,14 +224,15 @@ export const CartProvider = ({ children }) => {
                 addToCart,
                 removeFromCart,
                 updateQuantity,
+                clearCart,
                 parsePrice,
                 isUnitPrice,
                 isLoggedIn,
                 isGuest,
+                userId,
+                token,
                 setIsLoggedIn,
                 setToken,
-                clearCart,
-                token
             }}
         >
             {children}

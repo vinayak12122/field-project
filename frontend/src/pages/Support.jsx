@@ -14,7 +14,9 @@ import {
     ChevronDown,
     ChevronUp,
     FileText,
+    ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
     {
@@ -62,12 +64,18 @@ const faqs = [
     },
 ];
 
+
 const Support = () => {
     const [openFAQ, setOpenFAQ] = useState(null);
+    const navigate = useNavigate();
 
     return (
         <div className="font-inter text-gray-800">
-            {/* HERO */}
+            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2 cursor-pointer"
+                onClick={() => navigate('/')}
+            >
+                <ArrowLeft size={"30px"} color="white" />
+            </div>
             <section className="relative bg-gradient-to-r from-emerald-700 to-emerald-500 text-white py-24 px-6 overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
@@ -178,7 +186,7 @@ const Support = () => {
 
             {/* FOOTER STRIP */}
             <section className="bg-sky-950 text-white text-center py-6">
-                <p>© {new Date().getFullYear()} Nayaan Enterprise. All Rights Reserved.</p>
+                <p>© {new Date().getFullYear()} Sleep Sound. All Rights Reserved.</p>
             </section>
         </div>
     );
