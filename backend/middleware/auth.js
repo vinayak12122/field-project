@@ -10,7 +10,7 @@ export const authenticateAccessToken = (req,res,next)=>{
     try{
         const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.user = {
-            userId: payload.userId || payload._id,
+            userId: payload.userId || payload._id || payload.id, 
             ...payload
         };
         next();

@@ -16,7 +16,7 @@ const OrderSchema = new mongoose.Schema({
         state: { type: String, required: true },
         district: { type: String, required: true },
         phone: { type: String, required: true },
-        email: { type: String } // 👈 needed for guests
+        email: { type: String } 
     },
     paymentMethod: { type: String, default: "Cash on Delivery" },
     status: { type: String, default: "Pending" },
