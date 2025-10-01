@@ -303,13 +303,13 @@ const Header = ({ isMobile }) => {
       <div >
         {isMobile ?
           <div
-            className="w-10 relative cursor-pointer flex justify-center items-center"
+            className="w-10 right-3 relative cursor-pointer flex justify-center items-center"
             onClick={() => navigate('/wishlist')}
           >
             <Heart
               className={`w-6 h-6 ${wishlistCount > 0
                 ? "stroke-red-600 fill-red-400"
-                : "stroke-gray-600"
+                : `${isHome ? (scrolled || hovered ? "stroke-black" : "stroke-white") : "stroke-black"}`
                 }`}
             />
             {wishlistCount > 0 && (
@@ -324,7 +324,7 @@ const Header = ({ isMobile }) => {
               <Heart
                 className={`w-6 h-6 ${wishlistCount > 0
                   ? "stroke-black fill-red-400"
-                  : "stroke-gray-600"
+                  : `${isHome ? (scrolled || hovered ? "stroke-black" : "stroke-white") : "stroke-black"}`
                   }`}
               />
               {wishlistCount > 0 && (
