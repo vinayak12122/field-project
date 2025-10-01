@@ -20,7 +20,6 @@ router.post("/create", optionalAuth, async (req, res) => {
             return res.status(400).json({ error: "Email required for guest orders" });
         }
 
-        // Prepare order data - FIXED PART
         const orderData = {
             items,
             address,
@@ -28,9 +27,10 @@ router.post("/create", optionalAuth, async (req, res) => {
             isGuest: !!isGuest
         };
 
-        // Only add user reference for logged-in users
-        if (req.user?.userId && !isGuest) {
-            orderData.user = new mongoose.Types.ObjectId(req.user.userId);
+        const userId = req.user?.userId || req.user?.id || req.user?._id;
+
+        if (userId && !isGuest) {
+            orderData.user = new mongoose.Types.ObjectId(userId);
             orderData.isGuest = false;
         }
 
@@ -50,17 +50,21 @@ router.post("/create", optionalAuth, async (req, res) => {
         });
     }
 });
+
 router.get("/my", authenticateAccessToken, async (req, res) => {
     try {
-        console.log("Querying orders for user:", req.user.userId);
-        
-        const allOrders = await Order.find({});
-        console.log("All orders in DB:", allOrders);
+        const userId = req.user?.userId || req.user?.id || req.user?._id;
+        console.log("Querying orders for user:", userId);
+
+        if (!userId) {
+            return res.status(400).json({ error: "No user ID found in token" });
+        }
         
         const orders = await Order.find({
-            user: new mongoose.Types.ObjectId(req.user.userId),
+            user: new mongoose.Types.ObjectId(userId),
             isGuest: false
         }).sort({ createdAt: -1 });
+
         console.log("Matched orders:", orders);
         res.json({ orders });
     } catch (error) {
