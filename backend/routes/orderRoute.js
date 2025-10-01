@@ -77,10 +77,7 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
     try {
         const { orderId } = req.params;
 
-        console.log("Req User ID (from token):", req.user?.userId);
-        console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
-        console.log("Is Logged In:", !!req.user?.userId);
-
+        
         // CASE 1: Frontend-only guest orders (should never reach here)
         if (orderId.startsWith('guest-')) {
             return res.status(400).json({
@@ -88,7 +85,7 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
                 code: "GUEST_ORDER_FRONTEND_ONLY"
             });
         }
-
+        
         // CASE 2: Validate MongoDB orderId format
         if (!mongoose.Types.ObjectId.isValid(orderId)) {
             return res.status(400).json({
@@ -96,8 +93,13 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
                 code: "INVALID_ORDER_ID"
             });
         }
-
+        
         const order = await Order.findById(orderId);
+
+        console.log("Req User ID (from token):", req.user?.userId);
+        console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
+        console.log("Is Logged In:", !!req.user?.userId);
+        
         if (!order) {
             return res.status(404).json({
                 error: "Order not found",
