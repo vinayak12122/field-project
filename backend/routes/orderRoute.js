@@ -54,7 +54,7 @@ router.post("/create", optionalAuth, async (req, res) => {
 router.get("/my", authenticateAccessToken, async (req, res) => {
     try {
         const userId = req.user?.userId || req.user?.id || req.user?._id;
-        console.log("Querying orders for user:", userId);
+        // console.log("Querying orders for user:", userId);
 
         if (!userId) {
             return res.status(400).json({ error: "No user ID found in token" });
@@ -65,7 +65,7 @@ router.get("/my", authenticateAccessToken, async (req, res) => {
             isGuest: false
         }).sort({ createdAt: -1 });
 
-        console.log("Matched orders:", orders);
+        // console.log("Matched orders:", orders);
         res.json({ orders });
     } catch (error) {
         console.error("Fetch error:", error);
@@ -99,7 +99,7 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
         console.log("Req User ID (from token):", req.user?.userId);
         console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
         console.log("Is Logged In:", !!req.user?.userId);
-        
+
         if (!order) {
             return res.status(404).json({
                 error: "Order not found",

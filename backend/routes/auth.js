@@ -53,7 +53,7 @@ router.post("/login", [
     body("email").isEmail(),
     body("password").exists()
 ], async (req, res) => {
-    console.log("REQ BODY:", req.body);
+    // console.log("REQ BODY:", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
