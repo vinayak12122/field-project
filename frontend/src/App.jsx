@@ -24,6 +24,7 @@ import PaymentPolicy from './pages/PaymentPolicy';
 import HelpPage from './pages/Help';
 import SecurityPolicy from './pages/SecurityPolicy';
 import Support from './pages/Support';
+import Wishlist from './pages/WishList';
 
 
 const App = () => {
@@ -62,7 +63,7 @@ const App = () => {
         <Route path="/products/:category/:id" element={<ProductDetail />} />
         <Route path='/shop' element={<Shop/>}/>
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login isMobile={isMobile}/>} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/cart" element={<Cart isMobile={isMobile} />} />
         <Route path="/buy" element={<Buy />} />
@@ -74,6 +75,7 @@ const App = () => {
         <Route path='/help' element={<HelpPage/>}/>
         <Route path='/securitypolicy' element={<SecurityPolicy/>}/>
         <Route path='/support' element={<Support/>}/>
+        <Route path='/wishlist' element={<Wishlist/>}/>
       </Routes>
       <ToastContainer position="top-center" autoClose={3000} />
     </div>

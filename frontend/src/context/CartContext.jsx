@@ -87,7 +87,17 @@ export const CartProvider = ({ children }) => {
                         : i
                 );
             }
-            return [...prev, payload];
+            return [
+                ...prev,
+                {
+                    productId: product.id,
+                    id: product.id,         
+                    category: product.category, 
+                    title: product.title,
+                    price: product.price,
+                    img: product.img,
+                    quantity: 1,
+                },]
         });
 
         if (isLoggedIn) {

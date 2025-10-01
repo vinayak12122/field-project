@@ -77,7 +77,7 @@ const Footer = () => {
 
             {/* Bottom Section */}
             <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400">
-                <p>© {new Date().getFullYear()} Nayaan - Enterprise. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} Sleep Sound. All rights reserved.</p>
                 <div className="flex space-x-4 mt-2 md:mt-0">
                     {/* <a href="#" className="hover:text-white">Privacy Policy</a> */}
                     <a href="#" className="hover:text-white">Terms of Service</a>

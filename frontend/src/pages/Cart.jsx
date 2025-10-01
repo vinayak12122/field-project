@@ -95,15 +95,14 @@ const Cart = ({ isMobile }) => {
         );
     };
 
-    // Rest of your component remains exactly the same
     return (
         <div
-            className="p-6 bg-slate-400/20 w-full h-screen pt-30 flex gap-4"
+            className="p-6 bg-slate-400/20 w-full h-screen pt-25 flex gap-4"
             style={{ backgroundImage: "url('/bg-img-1.png')" }}
         >
             {isMobile ? (
                 !isHide ? (
-                    <div className="bg-white w-full h-full flex flex-col">
+                    <div className="bg-white w-full h-[93%] flex flex-col">
                         <div className="flex-1 overflow-y-auto pb-4">
                             {cart.map(renderCartItem)}
                         </div>
@@ -126,6 +125,7 @@ const Cart = ({ isMobile }) => {
                             <ArrowLeft size={24} />
                         </button>
                         <PaymentDetails
+                        isMobile={isMobile}
                             cart={cart}
                             parsePrice={parsePrice}
                             onProceed={() => { }}

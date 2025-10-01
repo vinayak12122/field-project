@@ -11,7 +11,9 @@ import {
     Star,
     Mail,
     Phone,
+    ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const stats = [
     { label: "Years of Trust", value: "25+", icon: <Clock className="w-6 h-6" /> },
@@ -53,10 +55,16 @@ const faqs = [
 const About = () => {
     const [tIndex, setTIndex] = useState(0);
     const [openFAQ, setOpenFAQ] = useState(null);
+    const navigate = useNavigate();
+
 
     return (
         <div className="font-inter antialiased text-gray-800">
-            {/* HERO */}
+            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2"
+                onClick={() => navigate('/')}
+            >
+                <ArrowLeft z={1000} size={"30px"} color="white" />
+            </div>
             <header className="relative">
                 <div className="h-auto md:h-[480px] bg-gradient-to-r from-emerald-900/90 to-emerald-700/80 flex items-center">
                     <div className="relative max-w-7xl mx-auto px-6 py-20 text-center md:text-left">

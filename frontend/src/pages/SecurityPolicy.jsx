@@ -11,7 +11,12 @@ import {
     ChevronDown,
     ChevronUp,
     CheckCircle,
+    ArrowRightIcon,
+    ArrowLeftFromLine,
+    ArrowLeftIcon,
+    ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const highlights = [
     {
@@ -65,10 +70,15 @@ const faqs = [
 
 const SecurityPolicy = () => {
     const [openFAQ, setOpenFAQ] = useState(null);
+    const navigate = useNavigate();
 
     return (
         <div className="font-inter text-gray-800">
-            {/* HERO */}
+            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2"
+            onClick={()=>navigate('/')}
+            >
+                <ArrowLeft size={"30px"} color="white" />
+            </div>
             <section className="relative bg-gradient-to-r from-emerald-700 to-emerald-500 text-white py-24 px-6 overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}

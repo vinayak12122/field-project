@@ -1,24 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { BadgeInfo, BoxIcon, HeadsetIcon, HeartHandshakeIcon, ListOrderedIcon, LucideBadgeIndianRupee, Mail, MailCheck, MenuIcon, PackageCheck, PackageOpenIcon, PhoneCall, PhoneIncoming, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, ShoppingBag, ShoppingCart } from "lucide-react";
-import { data, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { BadgeInfo, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, ShoppingBag } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { datasets } from "../data";
 import { useRef } from "react";
-import { FaWhatsapp } from "react-icons/fa";
 import api from "../api";
 
 const Header = ({ isMobile }) => {
-  const { isLoggedIn } = useCart();
+  const { isLoggedIn, cart } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [sidebarOpen, setSideBarOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  const getWishlistCount = () => {
+    const stored = localStorage.getItem("wishlist");
+    return stored ? JSON.parse(stored).length : 0;
+  };
+
+  useEffect(() => {
+    setWishlistCount(getWishlistCount());
+
+    const handleWishlistUpdate = () => {
+      setWishlistCount(getWishlistCount());
+    };
+
+    window.addEventListener("wishlist-updated", handleWishlistUpdate);
+
+    return () => {
+      window.removeEventListener("wishlist-updated", handleWishlistUpdate);
+    };
+  }, []);
 
   const userHoverTimeout = useRef(null);
-  // const [userHovered,setUserHovered] = useState(false);
 
   const [query, setQuery] = useState("");
   const [suggestion, setSuggestion] = useState([]);
@@ -57,8 +74,6 @@ const Header = ({ isMobile }) => {
     return () => clearTimeout(newTimer);
   }, [query])
 
-  const { cart } = useCart();
-
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
@@ -94,7 +109,6 @@ const Header = ({ isMobile }) => {
 
   const isHome = location.pathname === "/";
 
-  // Background + Text logic
   const bgClasses = isHome
     ? scrolled || hovered
       ? "bg-white shadow-md"
@@ -107,6 +121,33 @@ const Header = ({ isMobile }) => {
       : "text-white"
     : "text-black";
 
+
+  const sidebarLinks = [
+    { label: "Orders", icon: <PackageCheck />, color: "blue", link: "/order" },
+    { label: "Products", icon: <ShoppingBag />, color: "green", link: "/shop" },
+    { label: "Contact Us", icon: <PhoneCall />, color: "yellow", link: null, isExpandable: true },
+    { label: "Winning Coins", icon: <LucideBadgeIndianRupee />, color: "orange", link: null, isExpandable: true },
+    { label: "About Us", icon: <BadgeInfo />, color: "purple", link: "/about" },
+    { label: "Help", icon: <HeartHandshakeIcon />, color: "pink", link: "/help" },
+    { label: "Support", icon: <HeadsetIcon />, color: "red", link: "/support" },
+    { label: "Payment Policy", icon: <ReceiptIndianRupeeIcon />, color: "indigo", link: "/paymentpolicy" },
+    { label: "Security Policy", icon: <ReceiptTextIcon />, color: "gray", link: "/securitypolicy" },
+  ];
+
+  const colorClasses = {
+    blue: "bg-blue-100 text-blue-600 group-hover:bg-white group-hover:text-blue-600",
+    green: "bg-green-100 text-green-600 group-hover:bg-white group-hover:text-green-600",
+    yellow: "bg-yellow-100 text-yellow-600 group-hover:bg-white group-hover:text-yellow-600",
+    orange: "bg-orange-100 text-orange-600 group-hover:bg-white group-hover:text-orange-600",
+    purple: "bg-purple-100 text-purple-600 group-hover:bg-white group-hover:text-purple-600",
+    pink: "bg-pink-100 text-pink-600 group-hover:bg-white group-hover:text-pink-600",
+    red: "bg-red-100 text-red-600 group-hover:bg-white group-hover:text-red-600",
+    indigo: "bg-indigo-100 text-indigo-600 group-hover:bg-white group-hover:text-indigo-600",
+    gray: "bg-gray-100 text-gray-600 group-hover:bg-white group-hover:text-gray-600",
+  };
+
+
+
   return (
 
     <div
@@ -115,26 +156,26 @@ const Header = ({ isMobile }) => {
       className={`group flex justify-evenly py-2 text-center w-full items-center fixed top-0 left-0 z-50 transition-all duration-300 ${bgClasses} ${textClasses}`}
     >
       {isMobile && searchOpen && (
-        <div className="fixed inset-0 z-[10000] bg-white flex flex-col p-4">
-          {/* Top Bar with Close Button */}
-          <div className="flex items-center justify-between border-b pb-2">
-            <input
-              type="text"
-              placeholder="Search products..."
-              autoFocus
-              className="flex-1 outline-none text-lg text-gray-800"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button
-              onClick={() => setSearchOpen(false)}
-              className="relative right-2 text-gray-600 hover:text-black"
-            >
-              ✕
-            </button>
+        <div className="fixed inset-0 z-[10000] bg-white flex flex-col ">
+          <div className="flex items-center justify-between bg-red-400 px-1 py-2  pb-2">
+            <div className="flex bg-white p-2 rounded-md">
+              <input
+                type="text"
+                placeholder="Search sleep sound..."
+                autoFocus
+                className="flex-1 outline-none text-lg text-gray-800"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button
+                onClick={() => setSearchOpen(false)}
+                className="relative right-2 text-gray-600 hover:text-black "
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
-          {/* Suggestions */}
           <div className="flex-1 overflow-y-auto mt-4">
             {suggestion.length > 0 ? (
               suggestion.map((item) => {
@@ -178,13 +219,13 @@ const Header = ({ isMobile }) => {
         </div>
       )}
       <div
-        className={`font-unica font-bold text-xl sm:text-md md:text-2xl lg:text-2xl select-none ${textClasses} pt-2`}
+        className={`font-unica font-bold text-xl sm:text-md px-2 md:text-2xl lg:text-2xl select-none ${textClasses} pt-2 ml-10`}
         onClick={() => navigate("/")}
       >
-        <p className={`${isHome ? (hovered || scrolled ? "text-black/60" : "text-white/90") : "text-black/60"}`}>Nayaan Enterprise</p>
+        <img src={`${isHome ? (scrolled || hovered ? "logo.png" : "logo-white.png") : "logo.png"
+          }`} className={`${isMobile ? "w-20" : "w-15"} h-15 scale-250`} alt="Logo" />
       </div>
 
-      {/* Search Section */}
       <div className="lg:w-[40%] md:w-[40%] sm:w-[40%] w-[40%] ml-3 relative">
         {!isMobile ? (
           <div
@@ -194,7 +235,6 @@ const Header = ({ isMobile }) => {
           >
             <Search className="cursor-pointer" color="gray" size={25} />
 
-            {/* Search Input */}
             <input
               type="text"
               placeholder="Search products..."
@@ -203,7 +243,6 @@ const Header = ({ isMobile }) => {
               onChange={(e) => setQuery(e.target.value)}
             />
 
-            {/* Suggestions */}
             {suggestion.length > 0 && (
               <div
                 className="absolute top-full left-0 w-full 
@@ -261,96 +300,128 @@ const Header = ({ isMobile }) => {
         )}
       </div>
 
-      <div className="m-2">
-        {user ? (
+      <div >
+        {isMobile ?
           <div
-            className="relative user-dropdown-container"
-            onMouseEnter={() => {
-              setUserHovered(true);
-              if (userHoverTimeout.current) clearTimeout(userHoverTimeout.current);
-            }}
-            onMouseLeave={() => {
-              // Only close after 300ms if mouse doesn't re-enter
-              userHoverTimeout.current = setTimeout(() => setUserHovered(false), 300);
-            }}
+            className="w-10 relative cursor-pointer flex justify-center items-center"
+            onClick={() => navigate('/wishlist')}
           >
-            {/* User Icon */}
-            <span
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/30 text-white drop-shadow-lg cursor-pointer text-2xl"
-              title={user.name}
-            >
-              {getInitial(user.name)}
-            </span>
-
-            {/* Dropdown - Only shown when userHovered is true */}
-            {userHovered && (
-              <div
-                className="absolute right-0 top-full mt-0 w-max bg-white rounded-md shadow-lg z-[9999]"
-                onMouseEnter={() => clearTimeout(userHoverTimeout)} // Cancel close if hovering dropdown
-              >
-                <button
-                  onClick={async () => {
-                    try {
-                      localStorage.removeItem("accessToken");
-                      await api.post("/auth/logout", {});
-                    } catch (err) {
-                      // console.error("Logout failed:", err);
-                    } finally {
-                      window.location.href = "/login";
-                    }
-                  }}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left w-full"
-                >
-                  Logout
-                </button>
-              </div>
+            <Heart
+              className={`w-6 h-6 ${wishlistCount > 0
+                ? "stroke-red-600 fill-red-400"
+                : "stroke-gray-600"
+                }`}
+            />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
+                {wishlistCount}
+              </span>
             )}
           </div>
-        ) : (
-          <button
-            className="hover:bg-gray-400/20 cursor-pointer rounded-md transition-all duration-200 mr-2"
-            title="Login"
-            onClick={() => navigate("/login")}
-          >
-            <p
-              className={`font-cinzel px-4 py-1 text-xl transition-all duration-200 ${textClasses} drop-shadow-lg`}
-            >
-              Login
-            </p>
-          </button>
-        )}
+          :
+          <div className="flex items-center gap-3">
+            <div className="cursor-pointer relative" onClick={() => navigate('/wishlist')}>
+              <Heart
+                className={`w-6 h-6 ${wishlistCount > 0
+                  ? "stroke-black fill-red-400"
+                  : "stroke-gray-600"
+                  }`}
+              />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
+                  {wishlistCount}
+                </span>
+              )}
+            </div>
+            {user ? (
+              <div
+                className="relative user-dropdown-container "
+                onMouseEnter={() => {
+                  setUserHovered(true);
+                  if (userHoverTimeout.current) clearTimeout(userHoverTimeout.current);
+                }}
+                onMouseLeave={() => {
+                  userHoverTimeout.current = setTimeout(() => setUserHovered(false), 300);
+                }}
+              >
+                <span
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/30 text-white drop-shadow-lg cursor-pointer text-2xl"
+                  title={user.name}
+                >
+                  {getInitial(user.name)}
+                </span>
+                {userHovered && (
+                  <div
+                    className="absolute right-0 top-full mt-0 w-max bg-white rounded-md shadow-lg z-[9999]"
+                    onMouseEnter={() => clearTimeout(userHoverTimeout)}
+                  >
+                    <button
+                      onClick={async () => {
+                        try {
+                          localStorage.removeItem("accessToken");
+                          await api.post("/auth/logout", {});
+                        } catch (err) {
+                        } finally {
+                          window.location.href = "/login";
+                        }
+                      }}
+                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left w-full"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                className="relative hover:bg-gray-400/20 cursor-pointer rounded-md transition-all duration-200 left-5"
+                title="Login"
+                onClick={() => navigate("/login")}
+              >
+                <p
+                  className={`font-cinzel font-medium px-4 py-1 text-xl transition-all duration-200 ${textClasses} drop-shadow-lg`}
+                >
+                  Login
+                </p>
+              </button>
+            )}
+          </div>
+        }
       </div>
 
-      {/* Cart */}
       {
         !isMobile ? (
           <div
-            className={`font-over flex gap-4 px-4 py-2 rounded-sm cursor-pointer border-2
+            className={`font-over flex justify-center items-center h-full w-max gap-4 px-4 py-2 rounded-sm cursor-pointer border-2
             `}
             onClick={() => navigate("/cart")}
             title="Cart"
           >
-            <ShoppingCart strokeWidth={"-2px"} />
+            <img src={`${isHome ? (scrolled || hovered ? "cart-black.png" : "cart-white.png") : "cart-black.png"}`} className={`w-6 h-4`} alt="Cart Icon" />
             <p className="font-cinzel pt-0.5">CART</p>
           </div>
         ) : (
           <div
-            className="mr-8 relative right- sm:right-0 cursor-pointer"
+            className="mr-2 relative right- sm:right-0 cursor-pointer"
             title="Cart"
             onClick={() => navigate("/cart")}
           >
-            <ShoppingCart />
+            <img src={`${isHome ? (scrolled || hovered ? "cart-black.png" : "cart-white.png") : "cart-black.png"}`} className={`w-8 h-4 scale-120`} alt="Cart Icon" />
           </div>
         )
       }
 
-      {
-        cart.length >= 1 && (
-          <p className={`${isLoggedIn ? "lg:right-[9%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[11%] lg:top-[10%] md:right-[6.50%] md:top-[10%]"}  right-[15%] top-[25%]  sm:right-[6%] sm:top-[20%]  absolute bg-red-600 text-white font-bold px-2.5 rounded-full`}>
-            {cart.length}
-          </p>
-        )
-      }
+      {cart.length > 0 && (
+        <p
+          onClick={() => navigate("/cart")}
+          className={`absolute flex justify-center items-center w-5 h-5 bg-red-600 text-white text-xs rounded-full
+      ${isLoggedIn ? "lg:right-[14.50%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
+      right-[13.35%] top-[25%] sm:right-[6%] sm:top-[20%] 
+       px-2.5`}
+        >
+          {cart.length}
+        </p>
+      )}
       <div className="relative p-3">
         <MenuIcon
           className="cursor-pointer"
@@ -365,105 +436,110 @@ const Header = ({ isMobile }) => {
         ></div>
 
         <div
-          className={`fixed top-0 right-0 w-[250px] ${isMobile ? "w-full" : "w-[250px]"} h-full bg-white shadow-lg z-[9999] 
-      transform transition-transform duration-300 ease-in-out
-      ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`fixed top-0 right-0 ${isMobile ? "w-full" : "w-[320px]"} h-full
+    bg-gradient-to-b from-white via-gray-50 to-gray-100 shadow-2xl z-[9999]
+    flex flex-col transform transition-transform duration-500 ease-in-out
+    ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
         >
-          <button
-            onClick={() => setSideBarOpen(false)}
-            className="absolute top-4 right-4 text-gray-600 hover:text-black cursor-pointer"
-          >
-            ✕
-          </button>
+          <div className="items-center justify-between px-6 py-4 border-b bg-white/80 backdrop-blur-lg">
+            <div className="flex justify-between">
+              <img src="logo.png" className="w-30 scale-180 h-14 object-contain drop-shadow-md" alt="Logo" />
+              <button
+                onClick={() => setSideBarOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className=" flex w-full mt-3 justify-between gap-2">
+              {user ? (
+                <div className="flex w-full items-center justify-between gap-2">
+                  <p className="p-2 bg-gray-400/40 rounded-md w-full">{user?.name}</p>
+                  <button
+                    onClick={async () => {
+                      try {
+                        localStorage.removeItem("accessToken");
+                        await api.post("/auth/logout", {});
+                      } catch (err) {
+                        console.error("Logout failed:", err);
+                      } finally {
+                        setUser(null);
+                        setSideBarOpen(false);
+                        navigate("/login");
+                      }
+                    }}
+                    className="flex w-full justify-center items-center bg-red-600 hover:bg-red-600 text-white rounded-md p-2 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setSideBarOpen(false);
+                    navigate("/login");
+                  }}
+                  className="flex w-full justify-center items-center bg-gradient-to-r from-sky-800 to-sky-400 hover:bg-blue-600 text-white rounded-md p-2"
+                >
+                  Login
+                </button>
+              )}
+            </div>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-3 font-medium">
+            {sidebarLinks.map((item) => {
+              const isExpandable = item.isExpandable;
+              const isOpen = item.label === "Contact Us" ? showContact : showCoins;
 
-          <nav className="flex flex-col gap-6 text-lg text-gray-800 p-6 mt-10">
-            <button onClick={() => { setSideBarOpen(false); navigate("/order"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <PackageCheck />
-              Orders
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/shop"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <ShoppingBag />
-              Products
-            </button>
-            <button className="hover:text-blue-500 text-left flex gap-3 flex-col" onClick={() => setShowContact((prev) => !prev)}>
-              <div className="flex gap-3">
-                <PhoneCall />
-                Contact Us
-              </div>
-              {showContact && (
-                <div
-                  className="transition-all duration-500 ease-in-out bg-white/20 text-yellow-900 rounded-lg shadow-lg p-4 gap-1 flex flex-col "
-                >
-                  <span className="flex items-center gap-2 text-sm">
-                    <FaWhatsapp /> :
-                    <a
-                      href="https://wa.me/919876543210?text=Hello!%20I%20need%20assistance"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
-                    >
-                      1234567890
-                    </a>
-                  </span>
-                  <span className="flex items-center gap-2 text-sm">
-                    <PhoneIncoming size={13} /> :
-                    <a
-                      href="tel:+911234567890"
-                      className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
-                    >
-                      +91 1234567890
-                    </a>
-                  </span>
-                  <span className="flex items-center gap-2 text-sm">
-                    <Mail size={13} /> :
-                    <a
-                      href="mailto:support@nayaanenterprise.com"
-                      className="flex items-center gap-3 bg-emerald-600 text-white px-1 rounded-sm shadow hover:bg-emerald-700 transition"
-                    >
-                      ne@gmail.com
-                    </a>
-                  </span>
+              return (
+                <div key={item.label}>
+                  <button
+                    onClick={() => {
+                      if (item.link) {
+                        setSideBarOpen(false);
+                        navigate(item.link);
+                      } else {
+                        if (item.label === "Contact Us") setShowContact((prev) => !prev);
+                        if (item.label === "Winning Coins") setShowCoins((prev) => !prev);
+                      }
+                    }}
+                    className="group flex items-center justify-between w-full px-5 py-4 rounded-xl
+            bg-white shadow-sm hover:shadow-md border border-gray-200
+            hover:bg-gradient-to-r hover:from-sky-800 hover:to-indigo-500 
+            hover:text-white transition-all duration-300"
+                  >
+                    <span className="flex items-center gap-4">
+                      <span className={`p-2 rounded-lg ${colorClasses[item.color]}`}>
+                        {item.icon}
+                      </span>
+                      {item.label}
+                    </span>
+                    {isExpandable && <span className={`transition-transform ${isOpen ? "rotate-90" : ""}`}>›</span>}
+                  </button>
+
+                  {item.label === "Contact Us" && showContact && (
+                    <div className="ml-6 mt-3 space-y-2 text-sm text-gray-700 animate-fadeIn">
+                      <a href="https://wa.me/919876543210" target="_blank" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">WhatsApp: 1234567890</a>
+                      <a href="tel:+911234567890" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">Call: +91 1234567890</a>
+                      <a href="mailto:support@nayaanenterprise.com" className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600">Email: ne@gmail.com</a>
+                    </div>
+                  )}
+
+                  {item.label === "Winning Coins" && showCoins && (
+                    <div className="ml-6 mt-3 space-y-2 text-sm text-gray-700 animate-fadeIn">
+                      <p>Your Coins: <span className="font-bold text-orange-600">0</span></p>
+                      <p>Collect coins by booking and redeem for discounts soon!</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </button>
-            <button className="hover:text-blue-500 text-left flex gap-3 flex-col"
-              onClick={() => setShowCoins((prev) => !prev)}
-            >
-              <div className="flex gap-3">
-                <LucideBadgeIndianRupee />
-                Winning Coins
-              </div>
-              {showCoins && (
-                <div
-                  className="transition-all duration-500 ease-in-out bg-white/20 text-yellow-900 rounded-lg shadow-lg p-4 "
-                >
-                  <h3 className="text-sm mb-2">Your Winning Coins : <span className="text-orange-600 font-bold font-cinzel">0</span></h3>
-                  <p className="text-xs mt-2">Collect coins by booking and redeem for discounts soon!</p>
-                </div>
-              )}
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/about"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <BadgeInfo />
-              About Us
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/help"); }} className="hover:text-blue-500 text-left gap-3 flex">
-              <HeartHandshakeIcon />
-              Help
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/support"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <HeadsetIcon />
-              Support
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/paymentpolicy"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <ReceiptIndianRupeeIcon />
-              Payment policy
-            </button>
-            <button onClick={() => { setSideBarOpen(false); navigate("/securitypolicy"); }} className="hover:text-blue-500 text-left flex gap-3">
-              <ReceiptTextIcon />
-              Security policy
-            </button>
+              );
+            })}
           </nav>
+          <div className="px-6 py-4 border-t text-xs text-gray-500 bg-white/80 backdrop-blur-lg">
+            © {new Date().getFullYear()} Sleep Sound
+          </div>
         </div>
+
       </div>
     </div >
   );

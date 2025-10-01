@@ -15,7 +15,7 @@ const LoaderAnimation = () => (
     </div>
 );
 
-export default function Login({ onGoogleAuth }) {
+export default function Login({ onGoogleAuth,isMobile }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -101,7 +101,7 @@ export default function Login({ onGoogleAuth }) {
                             }`}
                     >
                         <div className="flex w-full justify-center" onClick={()=>navigate('/')}>
-                            <p className="font-unica font-bold text-2xl sm:text-md md:text-2xl lg:text-2xl select-none">Nayaan Enterprise</p>
+                            <img src="logo.png" className={` w-20 h-20 scale-250`} />
                         </div>
                         <p className="text-center text-gray-600 mt-2 mb-6">
                             Login to your account

@@ -42,7 +42,7 @@ const Trending = () => {
             <img src={product.img} alt={product.name} className="w-40 h-40 object-cover mb-4" />
             <h3 className="text-xl font-semibold mb-2">{product.title}</h3>
             {/* <p className="text-gray-600 mb-2">{product.desc}</p> */}
-            <span className="text-lg font-bold text-amber-700 mb-2">${product.price}</span>
+            <span className="text-lg font-bold text-amber-700 mb-2">{product.price}</span>
             <span className="text-sm text-green-700 mb-2">{product.popularity} people bought this</span>
             <button className="bg-amber-200 px-4 py-2 rounded hover:bg-amber-300"
             key={idx}
