@@ -77,6 +77,10 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
     try {
         const { orderId } = req.params;
 
+        console.log("Req User ID (from token):", req.user?.userId);
+        console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
+        console.log("Is Logged In:", !!req.user?.userId);
+
         // CASE 1: Frontend-only guest orders (should never reach here)
         if (orderId.startsWith('guest-')) {
             return res.status(400).json({
