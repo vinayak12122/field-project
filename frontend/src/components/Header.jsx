@@ -414,9 +414,9 @@ const Header = ({ isMobile }) => {
       {cart.length > 0 && (
         <p
           onClick={() => navigate("/cart")}
-          className={`absolute flex justify-center items-center w-5 h-5 bg-red-600 text-white text-xs rounded-full
+          className={`absolute flex justify-center items-center w-5 h-5 text-black text-sm rounded-full
       ${isLoggedIn ? "lg:right-[14.50%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
-      right-[13.35%] top-[25%] sm:right-[6%] sm:top-[20%] 
+      right-[15.20%] top-[25%] sm:right-[6%] sm:top-[20%] 
        px-2.5`}
         >
           {cart.length}
