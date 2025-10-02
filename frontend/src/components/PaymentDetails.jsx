@@ -10,7 +10,7 @@ const PaymentDetails = ({ cart, parsePrice,isMobile}) => {
     const navigate = useNavigate();
 
     return (
-        <div className={`bg-white ${isMobile ? "h-[91%]":"h-[96%]"} mt-9  w-full max-w-md mx-auto rounded shadow p-6 flex flex-col justify-between`}>
+        <div className={`bg-white ${isMobile ? "h-[89%]":"h-[96%]"} mt-9  w-full max-w-md mx-auto rounded shadow p-6 flex flex-col justify-between`}>
             <h2 className="text-xl font-bold mb-4 text-sky-900">Payment Details</h2>
             <div className="mb-4">
                 <p className="font-semibold mb-2 text-sky-900">Items:</p>
