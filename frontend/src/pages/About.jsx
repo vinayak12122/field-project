@@ -60,7 +60,7 @@ const About = () => {
 
     return (
         <div className="font-inter antialiased text-gray-800">
-            <div className="fixed z-10 h-max w-max bg-sky-900 p-2 rounded-md m-2 cursor-pointer"
+            <div className="fixed z-10 h-max w-max  p-2 rounded-md m-2 cursor-pointer"
                 onClick={() => navigate('/')}
             >
                 <ArrowLeft z={1000} size={"30px"} color="white" />

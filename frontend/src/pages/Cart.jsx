@@ -134,7 +134,7 @@ const Cart = ({ isMobile }) => {
                 )
             ) : (
                 <div className="flex w-full gap-4">
-                    <div className="space-y-4 bg-white w-[60%] h-full overflow-y-auto p-4 rounded shadow">
+                    <div className="space-y-4 bg-white w-[60%] h-full my-5 overflow-y-auto p-4 rounded shadow">
                         {cart.map(renderCartItem)}
                     </div>
                     <PaymentDetails

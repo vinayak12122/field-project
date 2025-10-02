@@ -25,13 +25,14 @@ import HelpPage from './pages/Help';
 import SecurityPolicy from './pages/SecurityPolicy';
 import Support from './pages/Support';
 import Wishlist from './pages/WishList';
+import AddAddress from './components/AddAddress';
 
 
 const App = () => {
 
   const location = useLocation();
 
-  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy','/securitypolicy','/support','/help'].includes(location.pathname);
+  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy', '/securitypolicy', '/support', '/help','/add-address'].includes(location.pathname);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -76,6 +77,7 @@ const App = () => {
         <Route path='/securitypolicy' element={<SecurityPolicy/>}/>
         <Route path='/support' element={<Support/>}/>
         <Route path='/wishlist' element={<Wishlist/>}/>
+        <Route path='/add-address' element={<AddAddress/>}/>
       </Routes>
       <ToastContainer position="top-center" autoClose={3000} />
     </div>

@@ -136,3 +136,4 @@ button .shine {
 .animate-slideFade.show {
   @apply opacity-100 translate-y-0;
 }
+

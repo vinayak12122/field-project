@@ -180,7 +180,7 @@ const MyOrder = () => {
     }
 
     return (
-        <div className="pt-10 px-4 max-w-4xl mx-auto pb-10">
+        <div className="pt-18 px-4 max-w-4xl mx-auto pb-10">
             <h2 className="text-3xl font-bold text-sky-900 mb-6">
                 {isLoggedIn ? "My Orders" : "Recent Orders"}
             </h2>
