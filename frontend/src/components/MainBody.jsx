@@ -28,7 +28,7 @@ const MainBody = ({isMobile}) => {
       </motion.div>
       <div className={`mt-30 flex w-full ${isMobile ? 'flex-col gap-3 justify-center h-max items-center' : 'flex gap-4'} w-full`}>
         {/* Button 1: Added h-[50px] and removed mt-4 (and the stray right-20) */}
-        <button className={`relative overflow-hidden text-white lg:py-3 lg:px-10 bg-[#ca0b04] lg:text-xl text-xl px-2 py-[10px] md:px-6 md:py-3 group hover:bg-amber-100 ${isMobile ? 'w-[90%] top-20':'w-max'} h-[50px] `}
+        <button className={`relative overflow-hidden text-white lg:py-3 lg:px-10 bg-[#eb4842] lg:text-xl text-xl px-2 py-[10px] md:px-6 md:py-3 group hover:bg-amber-100 ${isMobile ? 'w-[90%] top-20':'w-max'} h-[50px] `}
           onClick={() => navigate('/shop')}
         >
           <span className="relative z-10 cursor-pointer font-cinzel">Shop now</span>

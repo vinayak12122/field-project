@@ -152,7 +152,7 @@ const Header = ({ isMobile }) => {
     <div>
       <Link to={'/add-address'} >
       <div
-          className="cursor-pointer bg-gradient-to-r from-slate-900 to-slate-700 w-full flex justify-center text-white items-center text-md text-center h-6  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-2"
+          className="cursor-pointer bg-gradient-to-r from-slate-900 to-slate-700 w-full flex justify-center text-white items-center text-md text-center h-8  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-4"
       >
           <MapPin className="text-sky-600 mr-2" size={16} color="white" />
           <div className="flex  text-sm ">
@@ -177,7 +177,7 @@ const Header = ({ isMobile }) => {
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={`group flex justify-evenly py-2 text-center w-full items-center fixed top-6 left-0 z-50 transition-all duration-300 ${bgClasses} ${textClasses}`}
+        className={`group flex justify-evenly py-2 text-center w-full items-center fixed top-8 left-0 z-50 transition-all duration-300 ${bgClasses} ${textClasses}`}
       >
         {isMobile && searchOpen && (
           <div className="fixed inset-0 z-[10000] bg-white flex flex-col ">
