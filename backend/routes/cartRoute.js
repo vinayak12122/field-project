@@ -56,9 +56,11 @@ router.delete("/:productId", authenticateAccessToken, async (req, res) => {
         const cart = await Cart.findOne({ user: userId });
         if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-        cart.items = cart.items.filter((item) => item.productId !== req.params.productId);
+        cart.items = cart.items.filter(
+            (item) => String(item.productId) !== String(req.params.productId)
+        );
         await cart.save();
-        res.json(cart.items);
+        res.json({ message: "Item removed", items: cart.items });
     } catch (err) {
         console.error("Error in DELETE /cart/:productId:", err);
         res.status(500).json({ message: "Internal Server Error" });
