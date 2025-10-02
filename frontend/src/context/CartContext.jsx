@@ -144,9 +144,17 @@ export const CartProvider = ({ children }) => {
 
         if (isLoggedIn) {
             try {
-                await api.post("/cart", { productId: productId, quantity: 1 }, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                await api.post("/cart",
+                    {
+                        productId,
+                        title: product.title,
+                        price: normalizedPrice,
+                        img: product.img,
+                        quantity: 1,
+                    }
+                    , {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
             } catch (error) {
                 console.error("Error adding to cart. Rolling back local change:", error.response?.data || error);
                 reloadCart();

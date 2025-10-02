@@ -178,14 +178,7 @@ export default function AddAddress() {
             placeholder="State"
             className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
           />
-          <input
-            type="text"
-            name="state"
-            value={form.state}
-            onChange={handleChange}
-            placeholder="State"
-            className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
-          />
+
         </div>
       </div>
 
