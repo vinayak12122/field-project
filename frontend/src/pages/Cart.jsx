@@ -102,7 +102,7 @@ const Cart = ({ isMobile }) => {
         >
             {isMobile ? (
                 !isHide ? (
-                    <div className="bg-white w-full h-[89%] flex flex-col">
+                    <div className="bg-white w-full h-[89%] mt-9 flex flex-col">
                         <div className="flex-1 overflow-y-auto pb-4">
                             {cart.map(renderCartItem)}
                         </div>
