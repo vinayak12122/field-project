@@ -65,18 +65,26 @@ const Shop = () => {
 
     const toggleWishlist = (item) => {
         const exists = wishlist.some(w => w.uid === item.uid);
+
+        let updatedWishlist;
+
         if (exists) {
-            setWishlist(wishlist.filter(w => w.uid !== item.uid));
+            updatedWishlist = wishlist.filter(w => w.uid !== item.uid);
             toast.info("Removed from Wishlist");
         } else {
-            setWishlist([...wishlist, item]);
+            updatedWishlist = [...wishlist, item];
             toast.success("Added to Wishlist");
         }
+
+        setWishlist(updatedWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        window.dispatchEvent(new Event("wishlist-updated"));
     };
 
     return (
         <div className="p-8 pt-32 bg-contain bg-center" style={{ backgroundImage: "url('/bg-img-1.png')" }}>
-            <div className="w-full bg-amber-50 mb-10 rounded-md shadow-md">
+            <div className="w-full bg-amber-50 mb-4 mt-4 rounded-md shadow-md">
                 <p className="text-center font-cinzel text-2xl py-2 drop-shadow-lg">Elevate Your Space</p>
             </div>
 

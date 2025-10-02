@@ -45,7 +45,6 @@ const ProductDetail = () => {
 
     const inWishlist = wishlist.some((w) => w.uid === `${category}-${product.id}`);
 
-    // ✅ Toggle wishlist
     const toggleWishlist = () => {
         const uid = `${category}-${product.id}`;
         if (inWishlist) {
@@ -60,7 +59,7 @@ const ProductDetail = () => {
     };
 
     return (
-        <div className="p-6 pt-30 flex flex-col md:flex-row gap-8 bg-white w-full h-screen">
+        <div className="p-6 pt-40 flex flex-col md:flex-row gap-8 bg-white w-full h-screen">
             <div className="flex justify-center">
                 <img
                     src={product.img}

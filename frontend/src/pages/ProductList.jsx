@@ -40,24 +40,33 @@ const ProductList = () => {
         );
     }
 
-    const toggleWishlist = (itemWithUid) => {
-        const exists = wishlist.some((w) => w.uid === itemWithUid.uid);
+    const toggleWishlist = (item) => {
+        const exists = wishlist.some(w => w.uid === item.uid);
+
+        let updatedWishlist;
+
         if (exists) {
-            setWishlist(wishlist.filter((w) => w.uid !== itemWithUid.uid));
+            updatedWishlist = wishlist.filter(w => w.uid !== item.uid);
             toast.info("Removed from Wishlist");
         } else {
-            setWishlist([...wishlist, itemWithUid]);
+            updatedWishlist = [...wishlist, item];
             toast.success("Added to Wishlist");
         }
+
+        setWishlist(updatedWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        window.dispatchEvent(new Event("wishlist-updated"));
     };
+
 
     return (
         <div
             className="bg-slate-400/20 py-20 bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
         >
-            <div className="overflow-hidden relative mb-10 mx-4 top-8 bg-white shadow-md">
-                <p className="p-4 text-2xl font-cinzel text-center">
+            <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold bg-white shadow-md">
+                <p className="p-4 text-2xl font-playfair text-center">
                     {category.toUpperCase()}
                 </p>
             </div>
@@ -114,8 +123,8 @@ const ProductList = () => {
                                     >
                                         <Heart
                                             className={`w-6 h-6 ${inWishlist
-                                                    ? "text-red-500 fill-red-500"
-                                                    : "text-gray-600"
+                                                ? "text-red-500 fill-red-500"
+                                                : "text-gray-600"
                                                 }`}
                                         />
                                     </button>

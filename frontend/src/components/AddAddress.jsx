@@ -94,7 +94,7 @@ export default function AddAddress() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <div className="p-2 border-b sticky top-0 bg-white z-20 flex items-center shadow-sm">
+      <div className=" fixed p-2 border-b sticky top-0 bg-white z-20 flex items-center shadow-sm">
         <button
           onClick={() => navigate(-1)}
           className="p-2 mr-4 text-gray-600 hover:text-sky-600"
@@ -129,14 +129,12 @@ export default function AddAddress() {
           )}
         </button>
 
-        {/* Separator */}
         <div className="flex items-center space-x-3 text-gray-400">
           <div className="flex-grow border-t border-gray-200"></div>
           <span className="text-sm font-medium">Manual Entry</span>
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
 
-        {/* Inputs */}
         <div className="space-y-6">
           <input
             type="text"
@@ -172,6 +170,14 @@ export default function AddAddress() {
               className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
             />
           </div>
+          <input
+            type="text"
+            name="state"
+            value={form.state}
+            onChange={handleChange}
+            placeholder="State"
+            className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
+          />
           <input
             type="text"
             name="state"

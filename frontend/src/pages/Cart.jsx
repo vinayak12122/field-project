@@ -54,7 +54,7 @@ const Cart = ({ isMobile }) => {
                             src={item.img}
                             alt={item.title}
                             className="w-20 h-20 object-cover rounded cursor-pointer"
-                            onClick={() => navigate(`/products/${item.category}/${item.id}`)}
+                            onClick={() => navigate(`/products/${item.category}/${item.productId}`)}
                         />
                         <div>
                             <h2 className="text-sky-900 font-nunito font-bold">{item.title}</h2>
@@ -134,7 +134,7 @@ const Cart = ({ isMobile }) => {
                 )
             ) : (
                 <div className="flex w-full gap-4">
-                    <div className="space-y-4 bg-white w-[60%] h-full my-5 overflow-y-auto p-4 rounded shadow">
+                    <div className="space-y-4 bg-white w-[60%] h-[96%] overflow-y-auto p-4 mt-9 rounded shadow">
                         {cart.map(renderCartItem)}
                     </div>
                     <PaymentDetails
