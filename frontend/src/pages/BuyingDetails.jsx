@@ -174,6 +174,9 @@ const BuyingDetails = () => {
           }
         );
       } else {
+        await axios.post(
+          "https://field-project-6hka.onrender.com/api/orders/create",
+          orderData);
         localStorage.setItem(
           "guestOrders",
           JSON.stringify([
