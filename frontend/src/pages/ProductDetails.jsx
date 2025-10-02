@@ -6,7 +6,7 @@ import doormats from "../data/doormats";
 import { useCart } from "../context/CartContext";
 import interiors from "../data/interiors";
 import sofa from "../data/sofa";
-import { Heart } from "lucide-react";
+import { Heart, X } from "lucide-react";
 import { toast } from "react-toastify";
 
 const datasets = {
@@ -21,6 +21,7 @@ const ProductDetail = () => {
     const { category, id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useCart();
+    const [showFullScreen,setShowFullScreen] = useState(false);
 
     const products = datasets[category] || [];
     const product = products.find((item) => item.id.toString() === id);
@@ -64,7 +65,8 @@ const ProductDetail = () => {
                 <img
                     src={product.img}
                     alt={product.title}
-                    className="lg:w-100 w-full h-min lg:h-80 lg:mx-30 object-cover rounded-lg shadow md:justify-center"
+                    className="lg:w-100 w-full h-min lg:h-80 lg:mx-30 object-cover rounded-lg shadow md:justify-center cursor-pointer"
+                    onClick={()=>setShowFullScreen(true)}
                 />
             </div>
 
@@ -116,6 +118,21 @@ const ProductDetail = () => {
                     </button>
                 </div>
             </div>
+            {showFullScreen && (
+                <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+                    <button
+                        className="absolute top-5 right-5 text-white bg-black bg-opacity-50 rounded-full p-2 cursor-pointer"
+                        onClick={() => setShowFullScreen(false)}
+                    >
+                        <X size={28} />
+                    </button>
+                    <img
+                        src={product.img}
+                        alt={product.title}
+                        className="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
+                    />
+                </div>
+            )}
         </div>
     );
 };

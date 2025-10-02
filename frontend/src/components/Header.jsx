@@ -124,7 +124,7 @@ const Header = ({ isMobile }) => {
 
 
   const sidebarLinks = [
-    { label: "Orders", icon: <PackageCheck />, color: "blue", link: "/order" },
+    { label: "My Orders", icon: <PackageCheck />, color: "blue", link: "/order" },
     { label: "Products", icon: <ShoppingBag />, color: "green", link: "/shop" },
     { label: "Contact Us", icon: <PhoneCall />, color: "yellow", link: null, isExpandable: true },
     { label: "Winning Coins", icon: <LucideBadgeIndianRupee />, color: "orange", link: null, isExpandable: true },
@@ -376,7 +376,7 @@ const Header = ({ isMobile }) => {
                   >
                     {getInitial(user.name)}
                   </span>
-                  {userHovered && (
+                  {/* {userHovered && (
                     <div
                       className="absolute right-0 top-full mt-0 w-max bg-white rounded-md shadow-lg z-[9999]"
                       onMouseEnter={() => clearTimeout(userHoverTimeout)}
@@ -396,7 +396,7 @@ const Header = ({ isMobile }) => {
                         Logout
                       </button>
                     </div>
-                  )}
+                  )} */}
                 </div>
               ) : (
                 <button
