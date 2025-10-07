@@ -7,16 +7,15 @@ const ProductCategories = () => {
     const [isUserInteracting, setIsUserInteracting] = useState(false);
 
     const categories = [
-        { src: "carpet.jfif", label: "Carpets", onClick: () => navigate("/products/carpets") },
-        { src: "sheets.jfif", label: "Rooftop Sheets", onClick: () => navigate("/products/rooftops") },
-        { src: "doormats.jfif", label: "Doormats", onClick: () => navigate("/products/doormats") },
-        { src: "interior.jfif", label: "Interior Designing", onClick: () => navigate("/products/interiors") },
-        { src: "sofa-covers.jfif", label: "Sofa", onClick: () => navigate("/products/sofa") },
-        { src: "curtains.jfif", label: "Curtains", onClick: () => navigate("/products/curtains") },
-        { src: "blankets.jfif", label: "Blankets", onClick: () => navigate("/products/blankets") },
+        { src: "singlebed.png", label: "Single Bed", onClick: () => navigate("/products/single_bed") },
+        { src: "doublebed.png", label: "Double Bed", onClick: () => navigate("/products/double_bed") },
+        { src: "hydraulicbed.png", label: "Hydraulic Bed", onClick: () => navigate("/products/hydraulic_bed") },
+        { src: "armchair.png", label: "Armchair", onClick: () => navigate("/products/armchair") },
+        { src: "sofa-covers.jfif", label: "Three seater sofa", onClick: () => navigate("/products/sofa") },
+        { src: "curtains.jfif", label: "Slider Door Wardrobe", onClick: () => navigate("/products/curtains") },
+        { src: "blankets.jfif", label: "Sliding Door Wardrobe", onClick: () => navigate("/products/blankets") },
     ];
 
-    // duplicate for seamless looping
     const loopedCategories = [...categories, ...categories];
 
     useEffect(() => {
@@ -37,7 +36,6 @@ const ProductCategories = () => {
         return () => cancelAnimationFrame(animationFrame);
     }, [isUserInteracting]);
 
-    // pause/resume logic
     const handleUserDown = () => setIsUserInteracting(true);
     const handleUserUp = () => setTimeout(() => setIsUserInteracting(false), 2000);
 

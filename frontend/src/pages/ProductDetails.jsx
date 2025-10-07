@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import carpets from "../data/carpets";
-import rooftops from "../data/rooftop";
-import doormats from "../data/doormats";
 import { useCart } from "../context/CartContext";
-import interiors from "../data/interiors";
+import armchair from "../data/armchair";
 import sofa from "../data/sofa";
 import { Heart, X } from "lucide-react";
 import { toast } from "react-toastify";
+import single_bed from "../data/singleBed";
+import double_bed from "../data/doublebed";
+import hydraulic_bed from "../data/hydraulic-bed";
+
 
 const datasets = {
-    carpets,
-    rooftops,
-    doormats,
-    interiors,
+    single_bed,
+    double_bed,
+    hydraulic_bed,
+    armchair,
     sofa,
 };
 
@@ -21,7 +22,7 @@ const ProductDetail = () => {
     const { category, id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useCart();
-    const [showFullScreen,setShowFullScreen] = useState(false);
+    const [showFullScreen, setShowFullScreen] = useState(false);
 
     const products = datasets[category] || [];
     const product = products.find((item) => item.id.toString() === id);
@@ -66,7 +67,7 @@ const ProductDetail = () => {
                     src={product.img}
                     alt={product.title}
                     className="lg:w-100 w-full h-min lg:h-80 lg:mx-30 object-cover rounded-lg shadow md:justify-center cursor-pointer"
-                    onClick={()=>setShowFullScreen(true)}
+                    onClick={() => setShowFullScreen(true)}
                 />
             </div>
 

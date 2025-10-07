@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import carpets from "../data/carpets";
-import rooftops from "../data/rooftop";
-import doormats from "../data/doormats";
-import interiors from "../data/interiors";
+import armchair from "../data/armchair";
 import sofa from "../data/sofa";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
 import { Heart } from "lucide-react";
+import double_bed from "../data/doublebed";
+import single_bed from "../data/singleBed";
+import hydraulic_bed from "../data/hydraulic-bed";
 
 const datasets = {
-    carpets,
-    rooftops,
-    doormats,
-    interiors,
+    single_bed,
+    double_bed,
+    hydraulic_bed,
+    armchair,
     sofa,
 };
 
@@ -65,7 +65,7 @@ const ProductList = () => {
             className="bg-slate-400/20 py-20 bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
         >
-            <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold bg-white shadow-md">
+            <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold text-gray-700 bg-white shadow-md">
                 <p className="p-4 text-2xl font-playfair text-center">
                     {category.toUpperCase()}
                 </p>

@@ -1,14 +1,14 @@
-import carpets from "./carpets";
-import rooftops from "./rooftop";
-import doormats from './doormats';
-import interiors from "./interiors";
+import armchair from "./armchair";
 import sofa from "./sofa";
+import double_bed from "./doublebed";
+import single_bed from './singleBed';
+import hydraulic_bed from './hydraulic-bed';
 
 
 export const datasets = {
-    carpets,
-    rooftops,
-    doormats,
-    interiors,
+    single_bed,
+    double_bed,
+    hydraulic_bed,
+    armchair,
     sofa,
 };
