@@ -44,7 +44,7 @@ const PaymentDetails = ({ cart, parsePrice,isMobile}) => {
                 </div>
             </div>
             <button
-                className="bg-orange-400 font-cinzel px-4 py-2 w-full rounded cursor-pointer mt-4"
+                className="bg-orange-400 font-poppins px-4 py-2 w-full rounded-sm cursor-pointer mt-4"
                 onClick={()=>navigate('/details')}
             >
                 Proceed to Fill Details

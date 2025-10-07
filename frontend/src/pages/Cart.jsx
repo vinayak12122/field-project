@@ -108,7 +108,7 @@ const Cart = ({ isMobile }) => {
                         </div>
                         <div className="py-4 px-2 bg-white">
                             <button
-                                className="bg-orange-400 font-cinzel px-4 py-2 w-full cursor-pointer rounded"
+                                className="bg-orange-400 font-poppins rounded-sm px-4 py-2 w-full cursor-pointer "
                                 onClick={() => setIsHide(true)}
                             >
                                 Proceed for order
