@@ -1,7 +1,7 @@
 import armchair from "./armchair";
 import sofa from "./sofa";
 import double_bed from "./doublebed";
-import single_bed from './singleBed';
+import single_bed from './singlebed';
 import hydraulic_bed from './hydraulic-bed';
 
 

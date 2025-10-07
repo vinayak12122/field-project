@@ -5,7 +5,7 @@ import armchair from "../data/armchair";
 import sofa from "../data/sofa";
 import { Heart, X } from "lucide-react";
 import { toast } from "react-toastify";
-import single_bed from "../data/singleBed";
+import single_bed from "../data/singlebed";
 import double_bed from "../data/doublebed";
 import hydraulic_bed from "../data/hydraulic-bed";
 

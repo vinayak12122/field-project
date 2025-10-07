@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
 import { Heart } from "lucide-react";
 import double_bed from "../data/doublebed";
-import single_bed from "../data/singleBed";
+import single_bed from "../data/singlebed";
 import hydraulic_bed from "../data/hydraulic-bed";
 
 const datasets = {
