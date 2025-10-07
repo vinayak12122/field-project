@@ -3,6 +3,8 @@ import sofa from "./sofa";
 import double_bed from "./doublebed";
 import single_bed from './singlebed';
 import hydraulic_bed from './hydraulic-bed';
+import sliding_wardrobe from "./sliding-drobe";
+import modular_sofa from "./modular-sofa";
 
 
 export const datasets = {
@@ -11,4 +13,6 @@ export const datasets = {
     hydraulic_bed,
     armchair,
     sofa,
+    sliding_wardrobe,
+    modular_sofa
 };

@@ -12,8 +12,8 @@ const ProductCategories = () => {
         { src: "hydraulicbed.png", label: "Hydraulic Bed", onClick: () => navigate("/products/hydraulic_bed") },
         { src: "armchair.png", label: "Armchair", onClick: () => navigate("/products/armchair") },
         { src: "sofa-covers.jfif", label: "Three seater sofa", onClick: () => navigate("/products/sofa") },
-        { src: "curtains.jfif", label: "Slider Door Wardrobe", onClick: () => navigate("/products/curtains") },
-        { src: "blankets.jfif", label: "Sliding Door Wardrobe", onClick: () => navigate("/products/blankets") },
+        { src: "sliding-drobe.png", label: "Slider Door Wardrobe", onClick: () => navigate("/products/sliding_wardrobe") },
+        { src: "modular-sofa.png", label: "Modular Sofa", onClick: () => navigate("/products/modular_sofa") },
     ];
 
     const loopedCategories = [...categories, ...categories];

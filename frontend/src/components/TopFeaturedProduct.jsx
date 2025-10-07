@@ -3,10 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, LazyMotion, domAnimation } from "framer-motion";
 
 const featuredProducts = [
-  { id: "11", title: "Royal Heritage Carpet", img: "/images/carpets/download-21.jpg" },
-  { id: "2", title: "Tribal Mosaic Rug", img: "/images/carpets/download-22.jpg" },
-  { id: "3", title: "Bohemian Charm", img: "/images/carpets/download-23.jpg" },
-  { id: "4", title: "Lexuses Beige Curtains", img: "/images/curtains/img-9.jpg" },
+  { id: "11", title: "Minimalist Dreamscape Bed", img: "TOP-1.png" },
+  { id: "2", title: "Tufted Velvet Chesterfield Sofa", img: "TOP-2.png" },
+  { id: "3", title: "The Opulent Monarch Sectional", img: "TOP-3.png" },
+  { id: "4", title: "Luxurious French Rococo Settee", img: "TOP-4.png" },
 ];
 
 const TopFeaturedProduct = () => {
@@ -22,13 +22,13 @@ const TopFeaturedProduct = () => {
           <p className="font-cinzel p-5 text-2xl font-light py-10 text-center">
             Top Featured Product
           </p>
-          <p className="text-center font-extralight text-gray-600/80 m-2">
+          {/* <p className="text-center font-extralight text-gray-600/80 m-2">
             These are <span className="font-cinzel font-bold">Premium</span> products so for
             integrity or any damage we sell them offline. You can
             <Link to={"/contact"} className="px-1 text-fuchsia-600 font-bold font-playfair text-xl">
               Contact Us
             </Link>
-          </p>
+          </p> */}
         </div>
 
         <div className="flex flex-col gap-10 px-10 my-10 justify-center items-center w-full h-max">

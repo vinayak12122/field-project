@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import single_bed from "../data/singlebed";
 import double_bed from "../data/doublebed";
 import hydraulic_bed from "../data/hydraulic-bed";
+import sliding_wardrobe from "../data/sliding-drobe";
+import modular_sofa from "../data/modular-sofa";
 
 
 const datasets = {
@@ -16,6 +18,8 @@ const datasets = {
     hydraulic_bed,
     armchair,
     sofa,
+    sliding_wardrobe,
+    modular_sofa
 };
 
 const ProductDetail = () => {
