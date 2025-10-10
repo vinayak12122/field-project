@@ -56,9 +56,9 @@ const Header = ({ isMobile }) => {
 
     const newTimer = setTimeout(() => {
       const allProducts = [
-        ...datasets.single_bed.map((p) => ({ ...p, category: "single_beds" })),
-        ...datasets.double_bed.map((p) => ({ ...p, category: "double_beds" })),
-        ...datasets.hydraulic_bed.map((p) => ({ ...p, category: "hydraulic_beds" })),
+        ...datasets.single_bed.map((p) => ({ ...p, category: "single_bed" })),
+        ...datasets.double_bed.map((p) => ({ ...p, category: "double_bed" })),
+        ...datasets.hydraulic_bed.map((p) => ({ ...p, category: "hydraulic_bed" })),
         ...datasets.armchair.map((p) => ({ ...p, category: "armchair" })),
         ...datasets.sofa.map((p) => ({ ...p, category: "sofa" })),
         ...datasets.modular_sofa.map((p) => ({ ...p, category: "modular_sofa" })),
