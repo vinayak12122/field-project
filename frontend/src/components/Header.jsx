@@ -56,11 +56,13 @@ const Header = ({ isMobile }) => {
 
     const newTimer = setTimeout(() => {
       const allProducts = [
-        ...datasets.carpets.map((p) => ({ ...p, category: "carpets" })),
-        ...datasets.rooftops.map((p) => ({ ...p, category: "rooftops" })),
-        ...datasets.doormats.map((p) => ({ ...p, category: "doormats" })),
-        ...datasets.interiors.map((p) => ({ ...p, category: "interiors" })),
+        ...datasets.single_bed.map((p) => ({ ...p, category: "single_beds" })),
+        ...datasets.double_bed.map((p) => ({ ...p, category: "double_beds" })),
+        ...datasets.hydraulic_bed.map((p) => ({ ...p, category: "hydraulic_beds" })),
+        ...datasets.armchair.map((p) => ({ ...p, category: "armchair" })),
         ...datasets.sofa.map((p) => ({ ...p, category: "sofa" })),
+        ...datasets.modular_sofa.map((p) => ({ ...p, category: "modular_sofa" })),
+        ...datasets.sliding_wardrobe.map((p) => ({ ...p, category: "sliding_wardrobe" })),
       ];
 
       const filtered = allProducts.filter((p) =>
