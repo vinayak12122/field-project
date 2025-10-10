@@ -11,12 +11,11 @@ const Cart = ({ isMobile }) => {
         updateQuantity,
         parsePrice,
         isUnitPrice,
-        isLoading  // Add isLoading from your CartContext
+        isLoading 
     } = useCart();
     const [isHide, setIsHide] = useState(false);
     const navigate = useNavigate();
 
-    // Add loading state check (keep your existing UI structure)
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">

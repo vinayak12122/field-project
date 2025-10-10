@@ -151,6 +151,7 @@ export const CartProvider = ({ children }) => {
                         price: normalizedPrice,
                         img: product.img,
                         quantity: 1,
+                        category: product.category,
                     }
                     , {
                         headers: { Authorization: `Bearer ${token}` },
