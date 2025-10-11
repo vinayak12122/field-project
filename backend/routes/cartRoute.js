@@ -10,7 +10,7 @@ router.post("/", authenticateAccessToken, async (req, res) => {
         console.log("📥 Incoming cart body:", req.body); 
         
         const userId = req.user.userId;
-        const { productId, title, price, img, quantity } = req.body;
+        const { productId, title, price, img, quantity, category } = req.body;
 
         if (!productId || !price) {
             return res.status(400).json({ message: "productId and price are required" });
@@ -27,8 +27,19 @@ router.post("/", authenticateAccessToken, async (req, res) => {
 
         if (existingItem) {
             existingItem.quantity += quantity || 1;
+            existingItem.title = title ?? existingItem.title;
+            existingItem.img = img ?? existingItem.img;
+            existingItem.price = price ?? existingItem.price;
+            existingItem.category = category ?? existingItem.category;
         } else {
-            cart.items.push({ productId, title, price, img, quantity: quantity || 1 });
+            cart.items.push({ 
+                productId, 
+                title, 
+                price, 
+                img, 
+                quantity: quantity || 1 ,
+                category: category || "uncategorized",
+            });
         }
 
         await cart.save();
