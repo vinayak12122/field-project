@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, ShoppingBag } from "lucide-react";
+import { ArrowLeft, BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, ShoppingBag } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { datasets } from "../data";
@@ -184,8 +184,14 @@ const Header = ({ isMobile }) => {
       >
         {isMobile && searchOpen && (
           <div className="fixed inset-0 z-[10000] bg-white flex flex-col ">
-            <div className="flex items-center justify-between bg-red-400 px-1 py-2  pb-2">
-              <div className="flex bg-white p-2 rounded-md">
+            <div className="flex items-center justify-between border-b-1 border-gray-500 px-1 py-2  pb-2">
+              <div className="flex w-full bg-white p-2 rounded-md">
+                <button
+                  onClick={() => setSearchOpen(false)}
+                  className="relative right-2 text-gray-600 hover:text-black "
+                >
+                  <ArrowLeft className="m-2"/>
+                </button>
                 <input
                   type="text"
                   placeholder="Search sleep sound..."
@@ -195,7 +201,7 @@ const Header = ({ isMobile }) => {
                   onChange={(e) => setQuery(e.target.value)}
                 />
                 <button
-                  onClick={() => setSearchOpen(false)}
+                  onClick={() => setQuery("")}
                   className="relative right-2 text-gray-600 hover:text-black "
                 >
                   ✕
