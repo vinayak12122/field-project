@@ -188,7 +188,7 @@ const Header = ({ isMobile }) => {
               <div className="flex w-full bg-white p-2 rounded-md">
                 <button
                   onClick={() => setSearchOpen(false)}
-                  className="relative right-2 text-gray-600 hover:text-black "
+                  className="relative w-[10%] right-2 text-gray-600 hover:text-black "
                 >
                   <ArrowLeft className="m-2"/>
                 </button>
@@ -196,13 +196,13 @@ const Header = ({ isMobile }) => {
                   type="text"
                   placeholder="Search sleep sound..."
                   autoFocus
-                  className="flex-1 outline-none text-lg text-gray-800"
+                  className="flex-1 w-[80%] outline-none text-lg text-gray-800"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
                 <button
                   onClick={() => setQuery("")}
-                  className="relative right-12 text-gray-600 hover:text-black "
+                  className="relative  w-[10%] text-gray-600 hover:text-black "
                 >
                   ✕
                 </button>
