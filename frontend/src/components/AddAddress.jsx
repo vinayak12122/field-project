@@ -11,15 +11,21 @@ export default function AddAddress() {
     state: "",
     district: "",
     pincode: "",
+    phone:"",
+    email:"",
   });
 
   const [errors, setErrors] = useState({});
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasSavedAddress, setHasSavedAddress] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("userAddress");
-    if (saved) setForm(JSON.parse(saved));
+    if (saved) {
+      setForm(JSON.parse(saved));
+      setHasSavedAddress(true);
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -49,10 +55,34 @@ export default function AddAddress() {
     setTimeout(() => {
       localStorage.setItem("userAddress", JSON.stringify(form));
       setIsSaving(false);
+      setHasSavedAddress(true);
       toast.success("Address saved successfully ✅");
       navigate(-1);
     }, 500);
   };
+
+  const handleClear = () => {
+    const saved = localStorage.getItem("userAddress");
+    if (!saved) {
+      toast.info("No saved address found.");
+      return;
+    }
+    if (window.confirm("Are you sure you want to clear your saved address?")) {
+      localStorage.removeItem("userAddress");
+      setForm({
+        room: "",
+        landmark: "",
+        state: "",
+        district: "",
+        pincode: "",
+        phone:"",
+        email:"",
+      });
+      setHasSavedAddress(false);
+      navigate('/')
+    }
+  };
+
 
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
@@ -94,7 +124,7 @@ export default function AddAddress() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <div className=" fixed p-2 border-b sticky top-0 bg-white z-20 flex items-center shadow-sm">
+      <div className="p-2 border-b sticky top-0 bg-white z-20 flex items-center shadow-sm">
         <button
           onClick={() => navigate(-1)}
           className="p-2 mr-4 text-gray-600 hover:text-sky-600"
@@ -103,13 +133,11 @@ export default function AddAddress() {
         </button>
         <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-900">
           <Home className="text-sky-600" size={20} />
-          {localStorage.getItem("userAddress") ? "Edit Delivery Address" : "Add New Address"}
+          {localStorage.getItem("userAddress") ? "Edit Delivery Details" : "Add New Details"}
         </h2>
       </div>
 
-      {/* Body */}
       <div className="max-w-xl mx-auto flex-grow p-6 space-y-8">
-        {/* Location Button */}
         <button
           onClick={handleUseLocation}
           disabled={isLoadingLocation}
@@ -178,17 +206,33 @@ export default function AddAddress() {
             placeholder="State"
             className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
           />
+          <input
+            type="tel"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Phone Number"
+            className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
+          />
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email Address"
+            className="w-full border-b-2 border-gray-300 py-3 text-lg text-gray-800 focus:border-sky-500 focus:outline-none"
+          />
 
         </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-1xl z-30">
-        <div className="max-w-xl mx-auto">
+        <div className="flex gap-2 max-w-xl mx-auto">
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className={`w-full font-raleway flex items-center justify-center gap-3 px-6 py-2 text-xl font-bold rounded-lg transition-colors duration-300
-              ${isSaving ? "bg-green-400 cursor-not-allowed" : "bg-gradient-to-l from-green-600 to-green-800 "} text-white`}
+            className={`${hasSavedAddress ? "w-[70%]":"w-full"} font-raleway flex items-center justify-center gap-3 px-6 py-2 text-xl font-bold rounded-sm transition-colors duration-300 cursor-pointer
+              ${isSaving ? "bg-green-400 cursor-not-allowed" : "bg-green-500 "} text-white`}
           >
             {isSaving ? (
               <>
@@ -196,11 +240,19 @@ export default function AddAddress() {
               </>
             ) : (
               <>
-                <Save size={22} />
-                {localStorage.getItem("userAddress") ? "UPDATE ADDRESS" : "SAVE ADDRESS"}
+                {/* <Save size={22} /> */}
+                {localStorage.getItem("userAddress") ? "Update Address" : "Save Address"}
               </>
             )}
           </button>
+          {hasSavedAddress &&
+            <button 
+            className="w-[30%] bg-amber-600 px-2 rounded-sm text-white cursor-pointer"
+            onClick={handleClear}
+            >
+              Clear Address
+            </button>
+          }
         </div>
       </div>
       <div className="h-24"></div>

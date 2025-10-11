@@ -167,11 +167,11 @@ const Header = ({ isMobile }) => {
                 <span className="font-medium text-white mr-2">
                   {JSON.parse(localStorage.getItem("userAddress")).district} ,{" "}
                   {JSON.parse(localStorage.getItem("userAddress")).state} ,{" "}
-                  {JSON.parse(localStorage.getItem("userAddress")).pincode}
+                  {JSON.parse(localStorage.getItem("userAddress")).pincode}{"...."}
                 </span>
               </>
             ) : (
-              <span className="text-white">Add delivery address</span>
+              <span className="text-white">Add Delivery Details</span>
             )}
           </div>
           <Edit3 size={16} className="ml-1 text-gray-100"  />
@@ -363,7 +363,7 @@ const Header = ({ isMobile }) => {
               </div>
               {user ? (
                 <div
-                  className="relative user-dropdown-container "
+                  className="relative user-dropdown-container lg:left-6 "
                   onMouseEnter={() => {
                     setUserHovered(true);
                     if (userHoverTimeout.current) clearTimeout(userHoverTimeout.current);
@@ -442,8 +442,8 @@ const Header = ({ isMobile }) => {
         {cart.length > 0 && (
           <p
             onClick={() => navigate("/cart")}
-            className={`absolute flex justify-center items-center w-5 ${isMobile ? "bg-none" : "bg-red-600 "} h-5 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
-      ${isLoggedIn ? "lg:right-[14.50%] lg:top-[20%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
+            className={`absolute flex justify-center items-center w-6 ${isMobile ? "bg-none" : "bg-red-600 "} h-6 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
+      ${isLoggedIn ? "lg:right-[13.80%] lg:top-[14%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
       right-[14.50%] top-[25.60%] sm:right-[6%] sm:top-[20%] 
        px-2.5`}
           >
@@ -481,7 +481,7 @@ const Header = ({ isMobile }) => {
               </div>
               <div className=" flex w-full mt-3 justify-between gap-2">
                 {user ? (
-                  <div className="flex w-full items-center justify-between gap-2">
+                  <div className="flex flex-col w-full items-center justify-between gap-2">
                     <p className="p-2 bg-gray-400/40 rounded-md w-full">{user?.name}</p>
                     <button
                       onClick={async () => {
@@ -507,7 +507,7 @@ const Header = ({ isMobile }) => {
                       setSideBarOpen(false);
                       navigate("/login");
                     }}
-                    className="flex w-full justify-center items-center bg-gradient-to-r from-sky-800 to-sky-400 hover:bg-blue-600 text-white rounded-md p-2"
+                      className="flex w-full border-1 border-gray-400  justify-center items-center bg-white/30 hover:bg-gray-100/80  text-gray-800 rounded-md p-2"
                   >
                     Login
                   </button>
@@ -533,7 +533,7 @@ const Header = ({ isMobile }) => {
                       }}
                       className="group flex items-center justify-between w-full px-5 py-4 rounded-xl
             bg-white shadow-sm hover:shadow-md border border-gray-200
-            hover:bg-gradient-to-r hover:from-sky-800 hover:to-indigo-500 
+            hover:bg-gradient-to-r hover:from-sky-800 hover:to-indigo-800 
             hover:text-white transition-all duration-300"
                     >
                       <span className="flex items-center gap-4">

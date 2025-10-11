@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import { ArrowLeft, Wallet, CreditCard } from "lucide-react";
+import { ArrowLeft, Wallet, CreditCard, Loader } from "lucide-react";
 
 const Confetti = () => (
   <div className="confetti">
@@ -276,7 +276,7 @@ const BuyingDetails = () => {
         return (
           <div className="space-y-4">
             <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-              <div className="min-w-[120px] bg-sky-100 p-3 rounded-lg flex flex-col items-center cursor-pointer">
+              <div className="min-w-[120px] border-2 border-sky-800 bg-sky-100 p-3 rounded-lg flex flex-col items-center cursor-pointer">
                 <Wallet size={24} />
                 <span>Cash on Delivery</span>
               </div>
@@ -344,7 +344,7 @@ const BuyingDetails = () => {
             disabled={loading}
             className="px-4 py-2 bg-green-500 text-white rounded-lg"
           >
-            {loading ? "Placing Order..." : "Place Order"}
+              {loading ? <Loader size={24} className="animate-spin" /> : "Place Order"}
           </button>
         )}
       </div>
