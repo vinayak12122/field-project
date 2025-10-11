@@ -202,7 +202,7 @@ const Header = ({ isMobile }) => {
                 />
                 <button
                   onClick={() => setQuery("")}
-                  className="relative right-6 text-gray-600 hover:text-black "
+                  className="relative right-10 text-gray-600 hover:text-black "
                 >
                   ✕
                 </button>
