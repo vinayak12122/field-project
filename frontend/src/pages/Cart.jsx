@@ -97,7 +97,6 @@ const Cart = ({ isMobile }) => {
     return (
         <div
             className="p-6 bg-slate-400/20 w-full h-screen pt-25 flex gap-4"
-            style={{ backgroundImage: "url('/bg-img-1.png')" }}
         >
             {isMobile ? (
                 !isHide ? (

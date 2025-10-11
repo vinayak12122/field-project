@@ -444,7 +444,7 @@ const Header = ({ isMobile }) => {
             onClick={() => navigate("/cart")}
             className={`absolute flex justify-center items-center w-6 ${isMobile ? "bg-none" : "bg-red-600 "} h-6 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
       ${isLoggedIn ? "lg:right-[13.80%] lg:top-[14%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
-      right-[14.50%] top-[25.60%] sm:right-[6%] sm:top-[20%] 
+      right-[14%] top-[25.60%] sm:right-[6%] sm:top-[20%] 
        px-2.5`}
           >
             {cart.length}
