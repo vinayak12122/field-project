@@ -22,6 +22,11 @@ export const cartItemSchema = new mongoose.Schema({
         type: Number,
         default: 1,
     },
+    category: {            
+        type: String,
+        required: false,
+        trim: true,
+    },
 });
 
 const cartSchema = new mongoose.Schema({
