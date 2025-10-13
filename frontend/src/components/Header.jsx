@@ -149,7 +149,39 @@ const Header = ({ isMobile }) => {
     gray: "bg-gray-100 text-gray-600 group-hover:bg-white group-hover:text-gray-600",
   };
 
+  const saveRecentSearch = (product) => {
+    try {
+      let recent = JSON.parse(localStorage.getItem("recentSearches")) || [];
 
+      recent = recent.filter((item) => item.id !== product.id);
+
+      recent.unshift(product);
+
+      if (recent.length > 5) recent = recent.slice(0, 5);
+
+      localStorage.setItem("recentSearches", JSON.stringify(recent));
+    } catch (err) {
+      console.error("Failed to save recent search:", err);
+    }
+  };
+
+  const handleRemoveRecent = (removedItem) => {
+    const stored = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    const updated = stored.filter(
+      (item) => !(item.id === removedItem.id && item.category === removedItem.category)
+    );
+    localStorage.setItem("recentSearches", JSON.stringify(updated));
+    setSuggestion(updated);
+  };
+
+  const handleSearchFocus = () => {
+    const stored = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    setSuggestion(stored);
+  };
+
+  useEffect(() => {
+    if (isMobile) handleSearchFocus();
+  }, [isMobile]);
 
   return (
     <div>
@@ -220,28 +252,46 @@ const Header = ({ isMobile }) => {
                   );
 
                   return (
-                    <div
-                      key={`${item.category}-${item.id}`}
-                      onClick={() => {
-                        setQuery("");
-                        setSuggestion([]);
-                        setSearchOpen(false);
-                        navigate(`/products/${item.category}/${item.id}`);
-                      }}
-                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-                    >
-                      <img
-                        src={item.img}
-                        alt={item.title}
-                        className="w-12 h-12 object-cover rounded"
-                      />
-                      <div className="flex flex-col">
-                        <p
-                          className="text-gray-800 text-sm"
-                          dangerouslySetInnerHTML={{ __html: highlighted }}
-                        ></p>
-                        <span className="text-gray-500 text-xs">{item.price || "N/A"}</span>
+                    <div className="flex justify-between">
+                      <div
+                        key={`${item.category}-${item.id}`}
+                        onClick={() => {
+                          saveRecentSearch({
+                            id: item.id,
+                            title: item.title,
+                            category: item.category,
+                            img: item.img,
+                            price: item.price,
+                          });
+                          setQuery("");
+                          setSuggestion([]);
+                          setSearchOpen(false);
+                          navigate(`/products/${item.category}/${item.id}`);
+                        }}
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition w-full"
+                      >
+                        <img
+                          src={item.img}
+                          alt={item.title}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                        <div className="flex flex-col">
+                          <p
+                            className="text-gray-800 text-sm"
+                            dangerouslySetInnerHTML={{ __html: highlighted }}
+                          ></p>
+                          <span className="text-gray-500 text-xs">{item.price || "N/A"}</span>
+                        </div>
                       </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          handleRemoveRecent(item);
+                        }}
+                        className="text-gray-400 hover:text-red-500 text-xs cursor-pointer p-2 m-1"
+                      >
+                        ✕
+                      </button>
                     </div>
                   );
                 })
@@ -274,6 +324,8 @@ const Header = ({ isMobile }) => {
                 placeholder="Search products..."
                 className="w-full outline-none text-sm lg:text-lg md:text-xl sm:text-lg text-gray-800 bg-transparent"
                 value={query}
+                onFocus={handleSearchFocus}
+                onBlur={() => setTimeout(() => setSuggestion([]), 200)}
                 onChange={(e) => setQuery(e.target.value)}
               />
 
@@ -293,29 +345,47 @@ const Header = ({ isMobile }) => {
                     );
 
                     return (
-                      <div
-                        key={`${item.category}-${item.id}`}
-                        onClick={() => {
-                          setQuery("");
-                          setSuggestion([]);
-                          navigate(`/products/${item.category}/${item.id}`);
-                        }}
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-                      >
-                        <img
-                          src={item.img}
-                          alt={item.title}
-                          className="w-12 h-12 object-cover rounded"
-                        />
-                        <div className="flex flex-col">
-                          <p
-                            className="text-gray-800 text-sm"
-                            dangerouslySetInnerHTML={{ __html: highlighted }}
-                          ></p>
-                          <span className="text-gray-500 text-start  text-xs">
-                            {item.price || "N/A"}
-                          </span>
+                      <div className="flex justify-between items-center">
+                        <div
+                          key={`${item.category}-${item.id}`}
+                          onClick={() => {
+                            saveRecentSearch({
+                              id: item.id,
+                              title: item.title,
+                              category: item.category,
+                              img: item.img,
+                              price: item.price,
+                            });
+                            setQuery("");
+                            setSuggestion([]);
+                            navigate(`/products/${item.category}/${item.id}`);
+                          }}
+                          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer transition w-full"
+                        >
+                          <img
+                            src={item.img}
+                            alt={item.title}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                          <div className="flex flex-col">
+                            <p
+                              className="text-gray-800 text-sm"
+                              dangerouslySetInnerHTML={{ __html: highlighted }}
+                            ></p>
+                            <span className="text-gray-500 text-start  text-xs">
+                              {item.price || "N/A"}
+                            </span>
+                          </div>
                         </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveRecent(item);
+                          }}
+                          className="text-gray-400 hover:text-red-500 text-xs p-2 h-max cursor-pointer hover:rounded-full m-1 hover:bg-gray-200/50"
+                        >
+                          ✕
+                        </button>
                       </div>
                     );
                   })}
@@ -328,6 +398,8 @@ const Header = ({ isMobile }) => {
               className="flex justify-center ml-10 hover:bg-gray-700/10 py-2 rounded-full cursor-pointer"
               title="Search"
               onClick={() => setSearchOpen(true)}
+                onFocus={handleSearchFocus}
+                // onBlur={() => setTimeout(() => setSuggestion([]), 200)}
             >
               <Search size={20} color={`${isHome ? (scrolled || hovered ? "black" : "white") : "black"}`} />
             </div>

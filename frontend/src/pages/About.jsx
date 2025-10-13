@@ -23,12 +23,12 @@ const stats = [
 ];
 
 const categories = [
-    { title: "Carpets", desc: "Handpicked & durable carpets for every home", img: "/carpet.jfif" },
-    { title: "Doormats", desc: "Durable doormats with style & grip", img: "/doormats.jfif" },
-    { title: "Sofa Covers", desc: "Protect & style your sofas with premium fabrics", img: "/sofa-covers.jfif" },
-    { title: "Curtains", desc: "Light-filtering and blackout options", img: "/curtains.jfif" },
-    { title: "Blankets", desc: "Cozy blankets for every season", img: "/blankets.jfif" },
-    { title: "Interior Designing", desc: "Professional consultations & turnkey fit-outs", img: "/interior.jfif" },
+    { title: "Single Bed", desc: "Handpicked & durable carpets for every home", img: "/singlebed.png", url:"single_bed"},
+    { title: "Double Bed", desc: "Durable doormats with style & grip", img: "/doublebed.png", url:"double_bed" },
+    { title: "Sofa", desc: "Protect & style your sofas with premium fabrics", img: "/sofa-covers.jfif", url:"hydraulic_bed" },
+    { title: "Hydraulic Bed", desc: "Light-filtering and blackout options", img: "/hydraulicbed.png", url:"sofa" },
+    { title: "Modular Sofa", desc: "Cozy blankets for every season", img: "/modular-sofa.png", url:"sliding_wardrobe" },
+    { title: "Sliding Wardrobe", desc: "Professional consultations & turnkey fit-outs", img: "/sliding-drobe.png", url:"modular_sofa" },
 ];
 
 const team = [
@@ -75,7 +75,7 @@ const About = () => {
                             className="text-white max-w-3xl mx-auto"
                         >
                             <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
-                                Nayaan Enterprise <br/> 25 years crafting homes with comfort & style
+                                Sleep Sound <br/> 25 years crafting homes with comfort & style
                             </h1>
                             <p className="mt-4 text-sm md:text-lg text-gray-100/90">
                                 We blend traditional craftsmanship with contemporary design — carpets, doormats,
@@ -210,7 +210,7 @@ const About = () => {
                             <div className="p-4">
                                 <h4 className="font-semibold">{c.title}</h4>
                                 <p className="mt-2 text-sm text-gray-600">{c.desc}</p>
-                                <a className="mt-3 inline-block text-emerald-700 text-sm font-medium" href={`/products/${c.title.toLowerCase()}`}>
+                                <a className="mt-3 inline-block text-emerald-700 text-sm font-medium" href={`/products/${c.url}`}>
                                     Explore →
                                 </a>
                             </div>
