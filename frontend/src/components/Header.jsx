@@ -63,13 +63,14 @@ const Header = ({ isMobile }) => {
         ...datasets.sofa.map((p) => ({ ...p, category: "sofa" })),
         ...datasets.modular_sofa.map((p) => ({ ...p, category: "modular_sofa" })),
         ...datasets.sliding_wardrobe.map((p) => ({ ...p, category: "sliding_wardrobe" })),
+        ...datasets.top_collection.map((p)=>({...p,category:"top_collection"}))
       ];
 
       const filtered = allProducts.filter((p) =>
         p.title.toLowerCase().includes(query.toLowerCase())
       );
 
-      setSuggestion(filtered.slice(0, 5));
+      setSuggestion(filtered);
     }, 400);
 
     setTimer(newTimer);
@@ -187,13 +188,13 @@ const Header = ({ isMobile }) => {
     <div>
       <Link to={'/add-address'} >
       <div
-          className="cursor-pointer bg-gradient-to-r from-slate-900 to-slate-700 w-full flex justify-center text-white items-center text-md text-center h-10  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-4"
+          className="cursor-pointer bg-[#e9e9c7fb] w-full flex justify-center text-white items-center text-md text-center h-10  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-4"
       >
-          <MapPin className="text-sky-600 mr-2" size={16} color="white" />
+          <MapPin className="mr-2" size={16} color="black" />
           <div className="flex  text-sm ">
             {localStorage.getItem("userAddress") ? (
               <>
-                <span className="font-medium text-white mr-2">
+                <span className="font-medium text-black mr-2">
                   {JSON.parse(localStorage.getItem("userAddress")).landmark || "Saved Address"}
                 </span>
                 <span className="font-medium text-white mr-2">
@@ -203,10 +204,10 @@ const Header = ({ isMobile }) => {
                 </span>
               </>
             ) : (
-              <span className="text-white">Add Delivery Details</span>
+              <span className="text-black">Add Delivery Details</span>
             )}
           </div>
-          <Edit3 size={16} className="ml-1 text-gray-100"  />
+          <Edit3 size={16} className="ml-1 text-black"  />
       </div>
       </Link>
       <div

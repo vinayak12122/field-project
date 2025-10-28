@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import api from "../api";
 import { CalendarDays, CreditCard, Phone, Trash2, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 const MyOrder = () => {

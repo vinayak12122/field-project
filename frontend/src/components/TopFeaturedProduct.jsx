@@ -3,10 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, LazyMotion, domAnimation } from "framer-motion";
 
 const featuredProducts = [
-  { id: "11", title: "Minimalist Dreamscape Bed", img: "TOP-1.png" },
-  { id: "2", title: "Tufted Velvet Chesterfield Sofa", img: "TOP-2.png" },
-  { id: "3", title: "The Opulent Monarch Sectional", img: "TOP-3.png" },
-  { id: "4", title: "Luxurious French Rococo Settee", img: "TOP-4.png" },
+  // { id: "1", title: "Minimalist Dreamscape Bed", img: "images/top-collection/TOP-1.png" },
+  { id: "2", title: "Tufted Velvet Chesterfield Sofa", img: "images/top-collection/TOP-2.png" },
+  { id: "3", title: "Classic Maroon Victorian Sofa", img: "images/top-collection/TOP-3.png" },
+  { id: "4", title: "Emerald Green Heritage Sofa", img: "images/top-collection/TOP-4.png" },
 ];
 
 const TopFeaturedProduct = () => {
@@ -41,7 +41,7 @@ const TopFeaturedProduct = () => {
               viewport={{ once: false, amount: 0.3 }} // 🔹 triggers every time in view
               variants={idx % 2 === 0 ? fadeLeft : fadeRight}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              onClick={() => navigate(`/product/${product.id}`)}
+              onClick={() => navigate(`/products/top_collection/${product.id}`)}
               whileHover={{ scale: 1.03 }}
             >
               <img

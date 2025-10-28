@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGoogle } from "react-icons/fa";
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 import api from "../api";
 import { useNavigate } from 'react-router-dom'
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Home, Save, LocateFixed, Loader2, ArrowLeft } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export default function AddAddress() {
   const navigate = useNavigate();
@@ -232,7 +232,7 @@ export default function AddAddress() {
             onClick={handleSave}
             disabled={isSaving}
             className={`${hasSavedAddress ? "w-[70%]":"w-full"} font-raleway flex items-center justify-center gap-3 px-6 py-2 text-xl font-bold rounded-sm transition-colors duration-300 cursor-pointer
-              ${isSaving ? "bg-green-400 cursor-not-allowed" : "bg-green-500 "} text-white`}
+              ${isSaving ? "bg-red-400 cursor-not-allowed" : "bg-red-500 "} text-white`}
           >
             {isSaving ? (
               <>

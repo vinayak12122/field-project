@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { ArrowLeft, Wallet, CreditCard, Loader } from "lucide-react";

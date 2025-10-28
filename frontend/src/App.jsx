@@ -4,8 +4,7 @@ import MainBody from './components/MainBody';
 import Header from './components/Header';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from 'sonner';
 import ProductDetails from './pages/ProductDetails';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetails';
@@ -32,7 +31,7 @@ const App = () => {
 
   const location = useLocation();
 
-  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy', '/securitypolicy', '/support', '/help','/add-address'].includes(location.pathname);
+  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy', '/securitypolicy', '/support', '/help', '/add-address'].includes(location.pathname);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -54,32 +53,36 @@ const App = () => {
           <>
             <MainBody isMobile={isMobile} />
             <ProductCategories />
-            <TopFeaturedProduct/>
-            <FeaturedIn/>
-            <Footer/>
+            <TopFeaturedProduct />
+            <FeaturedIn />
+            <Footer />
           </>
         }
         />
         <Route path="/products/:category" element={<ProductList />} />
         <Route path="/products/:category/:id" element={<ProductDetail />} />
-        <Route path='/shop' element={<Shop/>}/>
+        <Route path='/shop' element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/login" element={<Login isMobile={isMobile}/>} />
+        <Route path="/login" element={<Login isMobile={isMobile} />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/cart" element={<Cart isMobile={isMobile} />} />
         <Route path="/buy" element={<Buy />} />
-        <Route path="/trending" element={<Trending/>}/>
-        <Route path='/details' element={<BuyingDetails/>}/>
-        <Route path='/order' element={<MyOrder/>}/>
-        <Route path='/about' element={<About/>}/>
-        <Route path='/paymentpolicy' element={<PaymentPolicy/>}/>
-        <Route path='/help' element={<HelpPage/>}/>
-        <Route path='/securitypolicy' element={<SecurityPolicy/>}/>
-        <Route path='/support' element={<Support/>}/>
-        <Route path='/wishlist' element={<Wishlist/>}/>
-        <Route path='/add-address' element={<AddAddress/>}/>
+        <Route path="/trending" element={<Trending />} />
+        <Route path='/details' element={<BuyingDetails />} />
+        <Route path='/order' element={<MyOrder />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/paymentpolicy' element={<PaymentPolicy />} />
+        <Route path='/help' element={<HelpPage />} />
+        <Route path='/securitypolicy' element={<SecurityPolicy />} />
+        <Route path='/support' element={<Support />} />
+        <Route path='/wishlist' element={<Wishlist />} />
+        <Route path='/add-address' element={<AddAddress />} />
       </Routes>
-      <ToastContainer position="top-center" autoClose={3000} />
+      <Toaster
+        position="top-center"
+        theme="light"
+        closeButton
+        />
     </div>
 
   )

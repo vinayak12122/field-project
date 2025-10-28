@@ -63,9 +63,9 @@ const ProductCategories = () => {
                         <img
                             src={item.src}
                             alt={item.label}
-                            className="w-28 h-28 lg:w-40 lg:h-40 object-cover mx-4 rounded-md hover:scale-95 transition-transform duration-300 shadow-lg"
+                            className="w-45 h-48 lg:w-60 lg:h-60 object-cover mx-4 hover:scale-95 transition-transform duration-300 shadow-lg"
                         />
-                        <p className="mt-2 text-sm font-medium">{item.label}</p>
+                        <p className="mt-2 text-sm font-medium font-nunito">{item.label}</p>
                     </div>
                 ))}
             </div>

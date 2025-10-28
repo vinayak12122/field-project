@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { datasets } from "../data";
 import { useCart } from "../context/CartContext";
 import { HashLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { ChevronLeftIcon, ChevronRightIcon, Heart } from "lucide-react";
 
 const Shop = () => {
@@ -83,9 +83,9 @@ const Shop = () => {
     };
 
     return (
-        <div className="p-8 pt-32 bg-contain bg-center" style={{ backgroundImage: "url('/bg-img-1.png')" }}>
-            <div className="w-full bg-amber-50 mb-4 mt-4 rounded-md shadow-md">
-                <p className="text-center font-cinzel text-2xl py-2 drop-shadow-lg">Elevate Your Space</p>
+        <div className="p-8 pt-32 bg-contain bg-center bg-slate-400/20 ">
+            <div className="w-full bg-amber-50 mb-4 mt-4 shadow-md">
+                <p className="text-center font-mulish text-2xl py-2 drop-shadow-lg">Elevate Your Space</p>
             </div>
 
             {isLoading ? (

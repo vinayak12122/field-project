@@ -4,12 +4,13 @@ import { useCart } from "../context/CartContext";
 import armchair from "../data/armchair";
 import sofa from "../data/sofa";
 import { Heart, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import single_bed from "../data/singlebed";
 import double_bed from "../data/doublebed";
 import hydraulic_bed from "../data/hydraulic-bed";
 import sliding_wardrobe from "../data/sliding-drobe";
 import modular_sofa from "../data/modular-sofa";
+import top_collection from "../data/top-collection";
 
 
 const datasets = {
@@ -19,7 +20,8 @@ const datasets = {
     armchair,
     sofa,
     sliding_wardrobe,
-    modular_sofa
+    modular_sofa,
+    top_collection
 };
 
 const ProductDetail = () => {
@@ -31,7 +33,6 @@ const ProductDetail = () => {
     const products = datasets[category] || [];
     const product = products.find((item) => item.id.toString() === id);
 
-    // ✅ Wishlist state
     const [wishlist, setWishlist] = useState(() => {
         const saved = localStorage.getItem("wishlist");
         return saved ? JSON.parse(saved) : [];
@@ -40,6 +41,26 @@ const ProductDetail = () => {
     useEffect(() => {
         localStorage.setItem("wishlist", JSON.stringify(wishlist));
     }, [wishlist]);
+
+    const toggleWishlist = (item) => {
+        const exists = wishlist.some(w => w.uid === item.uid);
+
+        let updatedWishlist;
+
+        if (exists) {
+            updatedWishlist = wishlist.filter(w => w.uid !== item.uid);
+            toast.info("Removed from Wishlist");
+        } else {
+            updatedWishlist = [...wishlist, item];
+            toast.success("Added to Wishlist");
+        }
+
+        setWishlist(updatedWishlist);
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+        window.dispatchEvent(new Event("wishlist-updated"));
+    };
+
 
     if (!product) {
         return (
@@ -50,19 +71,6 @@ const ProductDetail = () => {
     }
 
     const inWishlist = wishlist.some((w) => w.uid === `${category}-${product.id}`);
-
-    const toggleWishlist = () => {
-        const uid = `${category}-${product.id}`;
-        if (inWishlist) {
-            const updated = wishlist.filter((w) => w.uid !== uid);
-            setWishlist(updated);
-            toast.info("Removed from Wishlist");
-        } else {
-            const newItem = { ...product, category, uid };
-            setWishlist([...wishlist, newItem]);
-            toast.success("Added to Wishlist");
-        }
-    };
 
     return (
         <div className="p-6 pt-40 flex flex-col md:flex-row gap-8 bg-white w-full h-screen">
@@ -93,7 +101,7 @@ const ProductDetail = () => {
                         />
                     </div>
                     <button
-                        onClick={toggleWishlist}
+                        onClick={() => toggleWishlist({ ...product, uid: `${category}-${product.id}`, category })}
                         className="p-2 rounded-full cursor-pointer"
                     >
                         <Heart
@@ -110,15 +118,20 @@ const ProductDetail = () => {
                 <div className="flex items-end h-[20%]">
                     <button
                         onClick={() => {
-                            addToCart(product);
+                            // if (category !== "top_collection") {
+                            //     addToCart(product);
+                            //     navigate("/cart");
+                            // }
+                            const productWithCategory = { ...product, category };
+                            addToCart(productWithCategory);
                             navigate("/cart");
                         }}
                         className="relative lg:w-[50%] w-full rounded-md p-3 mt-9 cursor-pointer overflow-hidden border-2 border-sky-900 text-sky-900 font-semibold hover:text-white group"
                     >
-                        <span className="relative z-10">Buy Now</span>
+                        <span className="relative z-10">{category !== "top_collection" ? "Buy Now" : "Buy Now"}</span>
                         <span className="absolute inset-0 bg-sky-900 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
                         <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                            Buy Now
+                            {category !== "top_collection" ? "Buy Now" : "Buy Now"}
                         </span>
                     </button>
                 </div>

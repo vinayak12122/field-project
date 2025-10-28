@@ -3,13 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import armchair from "../data/armchair";
 import sofa from "../data/sofa";
 import { useCart } from "../context/CartContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Heart } from "lucide-react";
 import double_bed from "../data/doublebed";
 import single_bed from "../data/singlebed";
 import hydraulic_bed from "../data/hydraulic-bed";
 import sliding_wardrobe from "../data/sliding-drobe";
 import modular_sofa from "../data/modular-sofa";
+import top_collection from "../data/top-collection";
 
 const datasets = {
     single_bed,
@@ -18,7 +19,8 @@ const datasets = {
     armchair,
     sofa,
     sliding_wardrobe,
-    modular_sofa
+    modular_sofa,
+    top_collection
 };
 
 const ProductList = () => {
