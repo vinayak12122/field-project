@@ -185,10 +185,10 @@ export default function ProductDetail() {
                             {zoomOpen && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6">
                                     <div className="absolute inset-0 bg-black/70" onClick={() => setZoomOpen(false)} />
-                                    <motion.div initial={{ y: 20 }} animate={{ y: 0 }} exit={{ y: 20 }} className="relative max-w-6xl w-full bg-white rounded-2xl p-6 z-10">
+                                    <motion.div initial={{ y: 20 }} animate={{ y: 0 }} exit={{ y: 20 }} className="relative w-[90%] h-[90%] bg-white rounded-2xl p-6 z-10">
                                         <button onClick={() => setZoomOpen(false)} className="absolute right-4 top-4 bg-white p-2 rounded-full shadow"><X /></button>
-                                        <div className="flex flex-col md:flex-row gap-4">
-                                            <img src={images[active]} className="w-full md:w-2/3 h-[90vh] object-contain" alt="zoom" />
+                                        <div className="flex flex-col md:flex-row gap-4 justify-center items-center h-full">
+                                            <img src={images[active]} className="w-[90%] h-[90%] justify-center flex object-contain" alt="zoom" />
                                             <div className="md:w-1/3 flex flex-col gap-3">
                                                 {/* {images.map((s, i) => (
                                                     <button key={i} onClick={() => setActive(i)} className={`rounded overflow-hidden ${i === active ? 'ring-2 ring-sky-900' : ''}`}>
