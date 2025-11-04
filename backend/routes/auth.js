@@ -4,10 +4,21 @@ import argon2 from 'argon2';
 import jwt from "jsonwebtoken"
 import UserModel from '../models/UserModel.js';
 import RefreshToken from "../models/RefreshToken.js"
-import { signAccessToken, signRefreshToken, hashToken, verifyTokenHash } from "../utils/token.js";
 import { authenticateAccessToken } from '../middleware/auth.js';
+import { createRefreshToken, generateAccessToken, hashToken } from '../utils/token.js'
 
 const router = express.Router();
+
+const setRefreshTokenCookie = (res, rawToken) => {
+    const maxAge = parseInt(process.env.REFRESH_TOKEN_EXP || 30) * 24 * 60 * 60 * 1000;
+    res.cookie('refreshToken', rawToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: '/',
+        maxAge,
+    });
+};
 
 router.post("/signup", [
     body("name").notEmpty(),
@@ -25,20 +36,23 @@ router.post("/signup", [
 
 
         const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
-        const user = await UserModel.create({ 
-            name, 
-            email, 
+        const user = await UserModel.create({
+            name,
+            email,
             passwordHash,
-            isVerified:true
+            isVerified: true
         });
 
-        const accessToken = signAccessToken({ userId: user._id, email: user.email });
+        const accessToken = generateAccessToken(user._id );
+
+        const { rawToken } = await createRefreshToken(user._id);
+        setRefreshTokenCookie(res, rawToken);
 
         res.status(201).json({
             message: "User created successfully",
             user: { id: user._id, name: user.name, email: user.email, isVerified: user.isVerified },
             accessToken,
-            expiresIn:process.env.ACCESS_TOKEN_EXP
+            expiresIn: process.env.ACCESS_TOKEN_EXP
         });
 
     } catch (err) {
@@ -53,48 +67,53 @@ router.post("/login", [
     body("email").isEmail(),
     body("password").exists()
 ], async (req, res) => {
-    // console.log("REQ BODY:", req.body);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
 
     try {
         const { email, password } = req.body;
         const user = await UserModel.findOne({ email });
 
-        if (!user) return res.status(404).json({ error: "Account not found. Please signup first." });
+        if (!user)
+            return res.status(404).json({ error: "Account not found. Please signup first." });
 
-        if (!user.passwordHash) return res.status(400).json({ error: "Account exists via Google login. Use Google sign-in." });
+        if (!user.passwordHash)
+            return res.status(400).json({ error: "Account exists via Google login. Use Google sign-in." });
 
         const valid = await argon2.verify(user.passwordHash, password);
-        if (!valid) return res.status(400).json({ error: "Invalid credentials" });
+        if (!valid)
+            return res.status(400).json({ error: "Invalid credentials" });
 
-        const accessToken = signAccessToken({ userId: user._id, email: user.email });
-        const refreshToken = signRefreshToken({ userId: user._id });
+        // --- Generate Tokens ---
+        const accessToken = generateAccessToken(user._id);
+        const { rawToken } = await createRefreshToken(user._id );
 
-        const hashRefresh = await hashToken(refreshToken);
-        const decoded = jwt.decode(refreshToken);
-        const expiresAt = new Date(decoded.exp * 1000);
+        setRefreshTokenCookie(res, rawToken);
 
-        await RefreshToken.create({ userId: user._id, tokenHash: hashRefresh, expiresAt });
-
-        res.cookie("refreshToken", refreshToken, {
+        res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            domain: process.env.COOKIE_DOMAIN,
-            path: "/api/auth/refresh",
-            maxAge: expiresAt.getTime() - Date.now()
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 15 * 60 * 1000,
         });
 
+        // --- Send Response ---
         res.json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                isVerified: user.isVerified
+            },
             accessToken,
-            expiresIn: process.env.ACCESS_TOKEN_EXP,
-            user: { id: user._id, name: user.name, email: user.email, isVerified: user.isVerified }
+            expiresIn: process.env.ACCESS_TOKEN_EXP
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server error" });
+        console.error("Login error:", error);
+        res.status(500).json({ error: "Server error during login" });
     }
 });
 
@@ -102,96 +121,77 @@ router.post("/login", [
 
 
 router.post("/refresh", async (req, res) => {
-    const token = req.cookies?.refreshToken;
-    if (!token) return res.status(401).json({
-        error: "No refresh token",
-        code: "MISSING_REFRESH_TOKEN"  // Added for frontend handling
-    });
-
     try {
-        const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-        const dbTokens = await RefreshToken.find({ userId: payload.userId });
+        const rawToken = req.cookies?.refreshToken;
+        if (!rawToken) return res.status(401).json({ message: 'No refresh token' });
 
-        // Find the matching token
-        let dbToken = null;
-        for (const t of dbTokens) {
-            if (await verifyTokenHash(token, t.tokenHash)) {
-                dbToken = t;
-                break;
-            }
+        const tokenHash = hashToken(rawToken);
+        const stored = await RefreshToken.findOne({ tokenHash }).populate('user');
+
+        if (!stored) {
+            return res.status(401).json({ message: 'Invalid refresh token' });
         }
 
-        // Validate token
-        if (!dbToken || dbToken.expiresAt < new Date()) {
-            return res.status(401).json({
-                error: "Invalid or expired refresh token",
-                code: "INVALID_REFRESH_TOKEN"  // Standardized error code
-            });
+        if (stored.revokedAt || new Date() >= stored.expiresAt.getTime()) {
+            return res.status(401).json({ message: 'Refresh token expired or revoked' });
         }
 
-        // Issue new tokens
-        const newAccessToken = signAccessToken({ userId: payload.userId });
-        const newRefreshToken = signRefreshToken({ userId: payload.userId });
+        const { rawToken: newRaw } = await createRefreshToken(stored.user._id);
 
-        // Update database
-        const hashNewRefresh = await hashToken(newRefreshToken);
-        const newExpiresAt = new Date(jwt.decode(newRefreshToken).exp * 1000);
+        stored.revokedAt = new Date();
+        stored.replacedByTokenHash = hashToken(newRaw);
+        await stored.save();
 
-        await RefreshToken.create({
-            userId: payload.userId,
-            tokenHash: hashNewRefresh,
-            expiresAt: newExpiresAt
-        });
+        const accessToken = generateAccessToken(stored.user._id);
 
-        // Revoke old token (optional but recommended)
-        await RefreshToken.deleteOne({ _id: dbToken._id });
-
-        // Set HTTP-only cookie
-        res.cookie("refreshToken", newRefreshToken, {
+        res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            domain: process.env.COOKIE_DOMAIN,  // Fixed typo (was COKKIE_DOMAIN)
-            path: "/api/auth/refresh",
-            maxAge: newExpiresAt.getTime() - Date.now()
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 15 * 60 * 1000,
         });
 
-        // Response
+        setRefreshTokenCookie(res, newRaw);
+
         res.json({
-            accessToken: newAccessToken,
-            expiresIn: process.env.ACCESS_TOKEN_EXP
+            _id: stored.user._id,
+            name: stored.user.name,
+            email: stored.user.email,
+            token: accessToken
         });
-
-    } catch (err) {
-        console.error("Refresh failed:", err);
-        res.status(401).json({
-            error: err.name === 'TokenExpiredError'
-                ? "Refresh token expired"
-                : "Invalid refresh token",
-            code: "REFRESH_FAILED"
-        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error during token refresh' });
     }
 });
 
-router.post("/logout",async(req,res)=>{
-    const token = req.cookies?.refreshToken;
-    if(token){
-        const dbTokens = await RefreshToken.find();
-        for (const t of dbTokens){
-            if(await verifyTokenHash(token,t.tokenHash)){
-                await RefreshToken.deleteOne({_id:t._id});
-                break;
+router.post("/logout", async (req, res) => {
+    try {
+        const rawToken = req.cookies?.refreshToken;
+        if (rawToken) {
+            const tokenHash = hashToken(rawToken);
+            const stored = await RefreshToken.findOne({ tokenHash });
+            if (stored && !stored.revokedAt) {
+                stored.revokedAt = new Date();
+                await stored.save();
             }
         }
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/"
+        });
+        res.json({ message: 'Logged out' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Logout failed' });
     }
-    res.clearCookie("refreshToken", { path: "/api/auth/refresh", domain: process.env.COOKIE_DOMAIN })
-    res.json({message:"Logged Out"});
 });
-
 
 router.post("/revoke_all", authenticateAccessToken, async (req, res) => {
     try {
-        await RefreshToken.deleteMany({ userId: req.user.userId });
+        await RefreshToken.deleteMany(req.user.userId );
         res.clearCookie("refreshToken", { path: "/api/auth/refresh", domain: process.env.COOKIE_DOMAIN });
         res.json({ message: "All sessions revoked" });
     } catch (err) {
@@ -199,5 +199,19 @@ router.post("/revoke_all", authenticateAccessToken, async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 });
+
+router.get("/session",async(req,res)=>{
+    try {
+        const token = req.cookies.accessToken;
+        if(!token) return res.status(401).json({loggedIn:false});
+        const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const user = await UserModel.findById(decode.id).select("name email");
+        if(!user) return res.status(404).json({loggedIn:false});
+
+        res.json({loggedIn:true,user,token});
+    } catch (error) {
+        res.status(401).json({ loggedIn: false });
+    }
+})
 
 export default router;

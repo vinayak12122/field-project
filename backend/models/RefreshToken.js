@@ -1,40 +1,44 @@
-import mongoose from "mongoose";
-import dotenv from 'dotenv'
+import mongoose from 'mongoose'
 
-if (!mongoose.connection.readyState) {
-    mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-        .then(() => console.log("MongoDB connected inside RefreshToken model"))
-        .catch(err => {
-            console.error("MongoDB connection error in RefreshToken model:", err);
-            process.exit(1);
-        });
-}
-
-const refreshTokenSchema = new mongoose.Schema({
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+const RefreshTokenSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
     },
-    tokenHash:{
-        type:String,
-        required:true,
-        index:true
+    tokenHash: {
+        type: String,
+        required: true,
     },
-    expiresAt:{
-        type:Date,
-        required:true,
-        index:true
+    expiresAt: {
+        type: Date,
+        required: true,
     },
-    replacedBy:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"RefreshToken",
-        default:null,
+    createdAt: {
+        type: Date,
+        default: Date.now,
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    revokedAt: {
+        type: Date,
+    },
+    replacedByTokenHash: {
+        type: String,
     }
+},
+    {
+        toJSON:
+            { virtuals: true },
+        toObject:
+            { virtuals: true }
+    }
+);
+
+RefreshTokenSchema.virtual('isExpired').get(function () {
+    return Date.now() >= this.expiresAt.getTime();
 });
 
-export default mongoose.model("RefreshToken",refreshTokenSchema);
+RefreshTokenSchema.virtual('isActive').get(function () {
+    return !this.revokedAt && !this.isExpired;
+});
+
+export default mongoose.model("RefreshToken", RefreshTokenSchema);

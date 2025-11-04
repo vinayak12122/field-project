@@ -1,20 +1,36 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import User from "../models/UserModel.js";
 
-export const authenticateAccessToken = (req,res,next)=>{
-    const auth = req.headers["authorization"];
-    if(!auth) return res.status(401).json({error:"Missing Auth Header"});
+export const authenticateAccessToken = async (req, res, next) => {
+    try {
+        let token;
 
-    const [type,token] = auth.split(" ");
-    if (type !== "Bearer" || !token) return res.status(401).json({ error: "Malformed auth header" });
+        // 🔹 Check Authorization header OR cookies
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1];
+        } else if (req.cookies?.accessToken) {
+            token = req.cookies.accessToken;
+        }
 
-    try{
-        const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = {
-            userId: payload.userId || payload._id || payload.id, 
-            ...payload
-        };
+        if (!token) {
+            console.log("🚫 No token found in headers or cookies");
+            return res.status(401).json({ message: "Not authorized, no token" });
+        }
+
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            console.log("⚠️ Token decoded but user not found:", decoded);
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        req.user = user;
+        // console.log("✅ Authenticated user:", user._id);
         next();
-    }catch(err){
-        return res.status(401).json({ error: "Invalid/expired token" });
+    } catch (error) {
+        console.error("❌ Token verification failed:", error.message);
+        return res.status(401).json({ message: "Not authorized, token failed" });
     }
-}
+};

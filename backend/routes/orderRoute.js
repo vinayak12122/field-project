@@ -9,7 +9,7 @@ const router = express.Router();
 // Create order (works for both guest + logged-in)
 router.post("/create", optionalAuth, async (req, res) => {
     try {
-        console.log("req.user:", req.user);
+        // console.log("req.user:", req.user._id);
         const { items, address, paymentMethod, isGuest } = req.body;
 
         // Validation
@@ -28,6 +28,7 @@ router.post("/create", optionalAuth, async (req, res) => {
         };
 
         const userId = req.user?.userId || req.user?.id || req.user?._id;
+        console.log("User ID : ",userId)
 
         if (userId && !isGuest) {
             orderData.user = new mongoose.Types.ObjectId(userId);
@@ -36,6 +37,10 @@ router.post("/create", optionalAuth, async (req, res) => {
 
         const order = new Order(orderData);
         await order.save();
+
+        // console.log("Headers:", req.headers.authorization);
+        // console.log("Decoded user:", req.user);
+        // console.log("Body:", req.body);
 
         res.status(201).json({
             message: "Order placed successfully",
@@ -54,11 +59,13 @@ router.post("/create", optionalAuth, async (req, res) => {
 router.get("/my", authenticateAccessToken, async (req, res) => {
     try {
         const userId = req.user?.userId || req.user?.id || req.user?._id;
-        // console.log("Querying orders for user:", userId);
-
+        
         if (!userId) {
+            console.log("User not found : ",userId)
             return res.status(400).json({ error: "No user ID found in token" });
         }
+
+        console.log("Querying orders for user:", userId);
         
         const orders = await Order.find({
             user: new mongoose.Types.ObjectId(userId),
@@ -86,7 +93,6 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
             });
         }
         
-        // CASE 2: Validate MongoDB orderId format
         if (!mongoose.Types.ObjectId.isValid(orderId)) {
             return res.status(400).json({
                 error: "Invalid order ID format",
@@ -96,9 +102,9 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
         
         const order = await Order.findById(orderId);
 
-        console.log("Req User ID (from token):", req.user?.userId);
-        console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
-        console.log("Is Logged In:", !!req.user?.userId);
+        // console.log("Req User ID (from token):", req.user?._id || req.user?.id);
+        // console.log("Order User ID (from DB):", order.user ? order.user.toString() : 'NULL');
+        // console.log("Is Logged In:", !!req.user?.userId);
 
         if (!order) {
             return res.status(404).json({
@@ -108,13 +114,18 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
         }
 
         // CASE 3: Logged-in user deleting their own order
-        if (req.user?.userId && order.user?.toString() === req.user.userId) {
+        if (
+            (req.user?.userId && order.user?.toString() === req.user.userId) ||
+            (req.user?._id && order.user?.toString() === req.user._id) ||
+            (req.user?.id && order.user?.toString() === req.user.id)
+        ) {
             await order.deleteOne();
             return res.json({
                 message: "Order cancelled successfully",
-                cancelledOrderId: order._id
+                cancelledOrderId: order._id,
             });
         }
+
 
         // CASE 4: Database-stored guest order (with null user)
         if (!order.user) {
@@ -148,7 +159,7 @@ router.delete("/:orderId", optionalAuth, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Order cancellation error:", error);
+        // console.error("Order cancellation error:", error);
         res.status(500).json({
             error: "Internal server error",
             code: "SERVER_ERROR",

@@ -2,7 +2,7 @@ import express from "express"
 import passport from "passport"
 import jwt from "jsonwebtoken"
 import RefreshToken from "../models/RefreshToken.js"
-import { signAccessToken,signRefreshToken,hashToken } from "../utils/token.js"
+import { createRefreshToken, generateAccessToken, hashToken } from '../utils/token.js'
 
 const router = express.Router()
 

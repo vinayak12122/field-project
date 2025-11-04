@@ -7,9 +7,9 @@ const router = express.Router();
 router.post("/", authenticateAccessToken, async (req, res) => {
     try {
 
-        console.log("📥 Incoming cart body:", req.body); 
+        // console.log("📥 Incoming cart body:", req.body); 
         
-        const userId = req.user.userId;
+        const userId = req.user._id;
         const { productId, title, price, img, quantity, category } = req.body;
 
         if (!productId || !price) {
@@ -45,25 +45,30 @@ router.post("/", authenticateAccessToken, async (req, res) => {
         await cart.save();
         res.json(cart.items);
     } catch (err) {
-        console.error("Error in POST /cart:", err);
+        // console.error("Error in POST /cart:", err);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 router.get("/", authenticateAccessToken, async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user._id;
+
+        if (!userId) {
+            return res.status(401).json({ message: "Invalid user payload" });
+        }
+
         const cart = await Cart.findOne({ user: userId });
         res.json(cart ? cart.items : []);
     } catch (err) {
-        console.error("Error in GET /cart:", err);
+        // console.error("Error in GET /cart:", err);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 router.delete("/:productId", authenticateAccessToken, async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user._id;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) return res.status(404).json({ message: "Cart not found" });
 
@@ -73,7 +78,7 @@ router.delete("/:productId", authenticateAccessToken, async (req, res) => {
         await cart.save();
         res.json({ message: "Item removed", items: cart.items });
     } catch (err) {
-        console.error("Error in DELETE /cart/:productId:", err);
+        // console.error("Error in DELETE /cart/:productId:", err);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
@@ -81,7 +86,7 @@ router.delete("/:productId", authenticateAccessToken, async (req, res) => {
 
 router.put("/:productId", authenticateAccessToken, async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user._id;
         const { quantity } = req.body;
 
         const cart = await Cart.findOne({ user: userId });
@@ -95,7 +100,7 @@ router.put("/:productId", authenticateAccessToken, async (req, res) => {
 
         res.json(cart.items);
     } catch (err) {
-        console.error("Error in PUT /cart/:productId:", err);
+        // console.error("Error in PUT /cart/:productId:", err);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
