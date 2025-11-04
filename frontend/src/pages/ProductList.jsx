@@ -68,16 +68,16 @@ const ProductList = () => {
 
     return (
         <div
-            className="bg-slate-400/20 py-20 bg-cover bg-center"
+            className="bg-gray-50 py-20 bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
         >
-            <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold text-gray-700 bg-white shadow-md">
+            {/* <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold text-gray-700 bg-white shadow-md">
                 <p className="p-4 text-2xl font-playfair text-center">
                     {category.toUpperCase()}
                 </p>
-            </div>
+            </div> */}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pt-30">
                 {products.map((item) => {
                     const uid = `${category}-${item.id}`;
                     const itemWithUid = { ...item, uid, category };

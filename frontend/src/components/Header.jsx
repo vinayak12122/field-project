@@ -315,7 +315,7 @@ const Header = ({ isMobile }) => {
           {!isMobile ? (
             <div
               className={`${isHome ? (scrolled || hovered ? "flex" : "hidden") : "flex"
-                } items-center gap-4 border border-sky-900 px-4 py-2 ml-1 
+                } items-center gap-4 border border-gray-300 px-4 py-2 ml-1 
         transition-all duration-300 rounded-md bg-white relative`}
             >
               <Search className="cursor-pointer" color="gray" size={25} />
@@ -481,7 +481,7 @@ const Header = ({ isMobile }) => {
                 </div>
               ) : (
                 <button
-                    className="relative hover:bg-gray-300/20 hover:border-gray-300 hover:border cursor-pointer rounded-md transition-all duration-200 left-5"
+                    className="relative border border-transparent hover:bg-gray-300/20 hover:border-gray-300 hover:border cursor-pointer rounded-md transition-all duration-200 left-5"
                   title="Login"
                   onClick={() => navigate("/login")}
                 >
