@@ -315,7 +315,7 @@ const Header = ({ isMobile }) => {
           {!isMobile ? (
             <div
               className={`${isHome ? (scrolled || hovered ? "flex" : "hidden") : "flex"
-                } items-center gap-4 border border-gray-300 px-4 py-2 ml-1 
+                } items-center gap-4 border border-gray-400 px-4 py-2 ml-1 
         transition-all duration-300 rounded-md bg-white relative`}
             >
               <Search className="cursor-pointer" color="gray" size={25} />
