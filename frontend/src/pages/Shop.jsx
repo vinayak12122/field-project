@@ -83,7 +83,7 @@ const Shop = () => {
     };
 
     return (
-        <div className="p-8 pt-32 bg-contain bg-center bg-slate-400/20 ">
+        <div className="p-8 pt-32 bg-contain bg-center bg-gray-50 ">
             <div className="w-full bg-amber-50 mb-4 mt-4 shadow-md">
                 <p className="text-center font-mulish text-2xl py-2 drop-shadow-lg">Elevate Your Space</p>
             </div>

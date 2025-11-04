@@ -77,7 +77,7 @@ const ProductList = () => {
                 </p>
             </div> */}
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pt-30">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 pt-15">
                 {products.map((item) => {
                     const uid = `${category}-${item.id}`;
                     const itemWithUid = { ...item, uid, category };
