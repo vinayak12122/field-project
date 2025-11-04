@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import api, { setAccessToken } from "../api";
 import { useCart } from "../context/CartContext";
 import { HashLoader } from "react-spinners";
+import { ArrowLeft } from "lucide-react";
 
 const LoaderAnimation = () => (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -95,6 +96,7 @@ export default function Login({ onGoogleAuth,isMobile }) {
                         className={`relative z-10 ${isMobile ? "h-screen w-screen flex flex-col justify-center ":"w-full max-w-md rounded-2xl"} bg-white backdrop-blur-2xl shadow-2xl p-8 border border-transparent bg-clip-padding border-gradient-to-r from-pink-400 to-cyan-400 transition-all ${error ? "animate-shake" : ""
                             }`}
                     >
+                        {isMobile && <ArrowLeft className="absolute top-0 z-50 left-0 m-5 text-gray-600" onClick={() => navigate('/')} />}
                         <div className="flex w-full justify-center" onClick={()=>navigate('/')}>
                             <img src="logo.png" className={` w-20 h-20 scale-250`} />
                         </div>
@@ -150,7 +152,7 @@ export default function Login({ onGoogleAuth,isMobile }) {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.97 }}
                                 disabled={loading}
-                                className="mt-2 w-full py-3 bg-red-500 border border-amber-950 text-white font-semibold rounded-xl shadow-lg transition relative cursor-pointer"
+                                className="mt-2 w-full py-2 bg-red-400 text-xl border border-gray-400 text-white font-semibold rounded-xl shadow-lg transition relative cursor-pointer "
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">

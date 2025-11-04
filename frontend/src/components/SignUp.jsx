@@ -6,6 +6,7 @@ import api from "../api";
 import { useNavigate } from 'react-router-dom'
 
 import { HashLoader } from "react-spinners";
+import { ArrowLeft } from "lucide-react";
 
 const LoaderAnimation = () => (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -16,7 +17,7 @@ const LoaderAnimation = () => (
     </div>
 );
 
-export default function SignUp({ onGoogleAuth ,isMobile}) {
+export default function SignUp({ onGoogleAuth, isMobile }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -89,7 +90,7 @@ export default function SignUp({ onGoogleAuth ,isMobile}) {
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-white to-cyan-200 overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
-            >
+        >
             {/* Animated background blobs */}
             <motion.div
                 className="absolute w-72 h-72 bg-pink-400/30 rounded-full blur-3xl"
@@ -119,6 +120,11 @@ export default function SignUp({ onGoogleAuth ,isMobile}) {
             transition-all
 `}
                     >
+                        {isMobile &&
+                            <div className="absolute top-0 z-50 left-0 m-5 flex gap-4 items-center">
+                                <ArrowLeft className=" text-gray-800" onClick={() => navigate('/login')} />
+                                    {/* <p className="text-gray-800">Login</p> */}
+                            </div>}
                         <div className="flex w-full justify-center" onClick={() => navigate('/')}>
                             <img src="logo.png" className={`w-20 h-20 scale-250`} />
                         </div>
@@ -243,7 +249,7 @@ export default function SignUp({ onGoogleAuth ,isMobile}) {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.97 }}
                                 disabled={loading}
-                                className="mt-2 w-full py-3 bg-red-500 border border-amber-950
+                                className="mt-2 w-full py-2 text-xl bg-red-400 border border-gray-400
                 text-white font-semibold rounded-xl shadow-lg transition relative"
                             >
                                 {loading ? (
@@ -266,13 +272,13 @@ export default function SignUp({ onGoogleAuth ,isMobile}) {
                     </motion.div>
                 ) : (
                     <motion.div
-                            key="loader"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center min-h-screen"
+                        key="loader"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex flex-col items-center justify-center min-h-screen"
                     >
-                     
+
                     </motion.div>
                 )}
             </AnimatePresence>
