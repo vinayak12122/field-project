@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, ShoppingBag } from "lucide-react";
+import { ArrowLeft, BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, Settings, ShoppingBag } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { datasets } from "../data";
 import { useRef } from "react";
-import api from "../api";
+import API, { setAccessToken } from "../api";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = ({ isMobile }) => {
   const { isLoggedIn, cart } = useCart();
@@ -15,6 +16,7 @@ const Header = ({ isMobile }) => {
   const [hovered, setHovered] = useState(false);
   const [sidebarOpen, setSideBarOpen] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [showMenu, setShowMenu] = useState(false);
 
   const getWishlistCount = () => {
     const stored = localStorage.getItem("wishlist");
@@ -63,7 +65,7 @@ const Header = ({ isMobile }) => {
         ...datasets.sofa.map((p) => ({ ...p, category: "sofa" })),
         ...datasets.modular_sofa.map((p) => ({ ...p, category: "modular_sofa" })),
         ...datasets.sliding_wardrobe.map((p) => ({ ...p, category: "sliding_wardrobe" })),
-        ...datasets.top_collection.map((p)=>({...p,category:"top_collection"}))
+        ...datasets.top_collection.map((p) => ({ ...p, category: "top_collection" }))
       ];
 
       const filtered = allProducts.filter((p) =>
@@ -80,22 +82,20 @@ const Header = ({ isMobile }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        setUser(null);
-        return;
-      }
-
       try {
-        const res = await api.get("/me", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        setUser(res.data);
+
+        const refreshRes = await API.post("/auth/refresh", {}, { withCredentials: true });
+        if (refreshRes.data.token) {
+          setAccessToken(refreshRes.data.token);
+        }
+
+        const res = await API.get("/me");
+        setUser(res.data.user);
+        // console.log(refreshRes.data.token);
+
       } catch (err) {
         console.error("User fetch failed:", err);
         setUser(null);
-        localStorage.removeItem("accessToken");
       }
     };
     fetchUser();
@@ -187,9 +187,9 @@ const Header = ({ isMobile }) => {
   return (
     <div>
       <Link to={'/add-address'} >
-      <div
-          className="cursor-pointer bg-[#e9e9c7fb] w-full flex justify-center text-white items-center text-md text-center h-10  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-4"
-      >
+        <div
+          className="cursor-pointer bg-[#e2e2befb] w-full flex justify-center text-white items-center text-md text-center h-10  fixed top-0 left-0 z-50 shadow-md backdrop-blur-md py-4"
+        >
           <MapPin className="mr-2" size={16} color="black" />
           <div className="flex  text-sm ">
             {localStorage.getItem("userAddress") ? (
@@ -197,7 +197,7 @@ const Header = ({ isMobile }) => {
                 <span className="font-medium text-black mr-2">
                   {JSON.parse(localStorage.getItem("userAddress")).landmark || "Saved Address"}
                 </span>
-                <span className="font-medium text-white mr-2">
+                <span className="font-medium text-black mr-2">
                   {JSON.parse(localStorage.getItem("userAddress")).district} ,{" "}
                   {JSON.parse(localStorage.getItem("userAddress")).state} ,{" "}
                   {JSON.parse(localStorage.getItem("userAddress")).pincode}{"...."}
@@ -207,8 +207,8 @@ const Header = ({ isMobile }) => {
               <span className="text-black">Add Delivery Details</span>
             )}
           </div>
-          <Edit3 size={16} className="ml-1 text-black"  />
-      </div>
+          <Edit3 size={16} className="ml-1 text-black" />
+        </div>
       </Link>
       <div
         onMouseEnter={() => setHovered(true)}
@@ -223,7 +223,7 @@ const Header = ({ isMobile }) => {
                   onClick={() => setSearchOpen(false)}
                   className="relative w-[10%] right-2 text-gray-600 hover:text-black "
                 >
-                  <ArrowLeft className="m-2"/>
+                  <ArrowLeft className="m-2" />
                 </button>
                 <input
                   type="text"
@@ -286,7 +286,7 @@ const Header = ({ isMobile }) => {
                       </div>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); 
+                          e.stopPropagation();
                           handleRemoveRecent(item);
                         }}
                         className="text-gray-400 hover:text-red-500 text-xs cursor-pointer p-2 m-1"
@@ -399,8 +399,8 @@ const Header = ({ isMobile }) => {
               className="flex justify-center ml-10 hover:bg-gray-700/10 py-2 rounded-full cursor-pointer"
               title="Search"
               onClick={() => setSearchOpen(true)}
-                onFocus={handleSearchFocus}
-                // onBlur={() => setTimeout(() => setSuggestion([]), 200)}
+              onFocus={handleSearchFocus}
+            // onBlur={() => setTimeout(() => setSuggestion([]), 200)}
             >
               <Search size={20} color={`${isHome ? (scrolled || hovered ? "black" : "white") : "black"}`} />
             </div>
@@ -410,11 +410,11 @@ const Header = ({ isMobile }) => {
         <div >
           {isMobile ?
             <div
-              className="w-10 right-3 relative cursor-pointer flex justify-center items-center"
+              className="w-max right-3 relative cursor-pointer flex justify-center items-center"
               onClick={() => navigate('/wishlist')}
             >
               <Heart
-                className={`w-6 h-6 ${wishlistCount > 0
+                className={`w-8 h-6 ${wishlistCount > 0
                   ? "stroke-red-600 fill-red-400"
                   : `${isHome ? (scrolled || hovered ? "stroke-black" : "stroke-white") : "stroke-black"}`
                   }`}
@@ -481,7 +481,7 @@ const Header = ({ isMobile }) => {
                 </div>
               ) : (
                 <button
-                  className="relative hover:bg-gray-400/20 cursor-pointer rounded-md transition-all duration-200 left-5"
+                    className="relative hover:bg-gray-300/20 hover:border-gray-300 hover:border cursor-pointer rounded-md transition-all duration-200 left-5"
                   title="Login"
                   onClick={() => navigate("/login")}
                 >
@@ -496,40 +496,40 @@ const Header = ({ isMobile }) => {
           }
         </div>
 
-        {
-          !isMobile ? (
-            <div
-              className={`font-over flex justify-center items-center h-full w-max gap-4 px-4 py-2 rounded-sm cursor-pointer border-2
-            `}
-              onClick={() => navigate("/cart")}
-              title="Cart"
-            >
-              <img src={`${isHome ? (scrolled || hovered ? "cart-black.png" : "cart-white.png") : "cart-black.png"}`} className={`w-6 h-4`} alt="Cart Icon" />
-              <p className="font-cinzel pt-0.5">CART</p>
-            </div>
-          ) : (
-            <div
-              className="mr-2 relative right- sm:right-0 cursor-pointer"
-              title="Cart"
-              onClick={() => navigate("/cart")}
-            >
-              <img src={`${isHome ? (scrolled || hovered ? "cart-black.png" : "cart-white.png") : "cart-black.png"}`} className={`w-8 h-4 scale-120`} alt="Cart Icon" />
-            </div>
-          )
-        }
+        <div
+          className="relative cursor-pointer w-max flex items-center justify-center"
+          onClick={() => navigate("/cart")}
+          title="Cart"
+        >
+          <img
+            src={
+              isHome
+                ? scrolled || hovered
+                  ? "cart-black.png"
+                  : "cart-white.png"
+                : "cart-black.png"
+            }
+            className="w-7 h-6 sm:w-7 sm:h-6"
+            alt="Cart Icon"
+          />
 
-        {cart.length > 0 && (
-          <p
-            onClick={() => navigate("/cart")}
-            className={`absolute flex justify-center items-center w-6 ${isMobile ? "bg-none" : "bg-red-600 "} h-6 ${isHome ? (scrolled || hovered ? "text-black" : "text-white") : "text-black"} text-md rounded-full
-      ${isLoggedIn ? "lg:right-[13.80%] lg:top-[14%] md:right-[8.50%] md:top-[20%]" : "lg:right-[12.20%] lg:top-[16%] md:right-[6.50%] md:top-[10%]"} 
-      right-[14%] top-[25.60%] sm:right-[6%] sm:top-[20%] 
-       px-2.5`}
-          >
-            {cart.length}
-          </p>
-        )}
-        <div className="relative p-3">
+          {cart.length > 0 && (
+            <span
+              className={`
+        absolute -top-2 -right-2 
+        flex items-center justify-center 
+        w-5 h-5 text-xs font-semibold
+        rounded-full 
+        ${isHome ? (scrolled || hovered ? "bg-red-600 text-white" : "bg-white text-red-600") : "bg-red-600 text-white"}
+        shadow-sm
+      `}
+            >
+              {cart.length}
+            </span>
+          )}
+        </div>
+
+        <div className="relative p-3 w-max">
           <MenuIcon
             className="cursor-pointer"
             onClick={() => setSideBarOpen(true)}
@@ -559,38 +559,16 @@ const Header = ({ isMobile }) => {
                 </button>
               </div>
               <div className=" flex w-full mt-3 justify-between gap-2">
-                {user ? (
-                  <div className="flex flex-col w-full items-center justify-between gap-2">
-                    <p className="p-2 bg-gray-400/40 rounded-md w-full">{user?.name}</p>
-                    <button
-                      onClick={async () => {
-                        try {
-                          localStorage.removeItem("accessToken");
-                          await api.post("/auth/logout", {});
-                        } catch (err) {
-                          console.error("Logout failed:", err);
-                        } finally {
-                          setUser(null);
-                          setSideBarOpen(false);
-                          navigate("/login");
-                        }
-                      }}
-                      className="flex w-full justify-center items-center bg-red-600 hover:bg-red-600 text-white rounded-md p-2 cursor-pointer"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setSideBarOpen(false);
-                      navigate("/login");
-                    }}
-                      className="flex w-full border-1 border-gray-400  justify-center items-center bg-white/30 hover:bg-gray-100/80  text-gray-800 rounded-md p-2"
+                {user &&
+                  <p className="p-2 bg-red-200/30 border border-gray-200 text-black/70 rounded-md w-full">{user?.name}</p>
+                }
+                {!user &&
+                  <div onClick={() => navigate('/login')}
+                    className="p-2 bg-gray-300/20 border border-gray-300 text-black/70 rounded-md w-full hover:bg-gray-300/30 cursor-pointer"
                   >
                     Login
-                  </button>
-                )}
+                  </div>
+                }
               </div>
             </div>
             <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-3 font-medium">
@@ -611,9 +589,8 @@ const Header = ({ isMobile }) => {
                         }
                       }}
                       className="group flex items-center justify-between w-full px-5 py-4 rounded-xl
-            bg-white shadow-sm hover:shadow-md border border-gray-200
-            hover:bg-gradient-to-r hover:from-sky-800 hover:to-indigo-800 
-            hover:text-white transition-all duration-300"
+            bg-white shadow-sm hover:shadow-md
+            hover:bg-black/5 border border-gray-300 transition-all duration-300"
                     >
                       <span className="flex items-center gap-4">
                         <span className={`p-2 rounded-lg ${colorClasses[item.color]}`}>
@@ -663,6 +640,21 @@ const Header = ({ isMobile }) => {
                   </div>
                 );
               })}
+              {user && (<div
+                className="relative group flex items-center justify-between w-full px-5 py-4 rounded-xl
+              bg-white shadow-sm hover:shadow-md
+              hover:bg-black/5 border border-gray-300 transition-all duration-300"
+                onClick={() => {
+                  navigate("/settings");
+                }}
+              >
+                <span className="flex items-center cursor-pointer gap-4">
+                  <span className="p-2 rounded-lg bg-gray-100 text-gray-600 group-hover:bg-white group-hover:text-gray-600">
+                    <Settings color="gray" />
+                  </span>
+                  <span className="font-medium">Settings</span>
+                </span>
+              </div>)}
             </nav>
             <div className="px-6 py-4 border-t text-xs text-gray-500 bg-white/80 backdrop-blur-lg">
               © {new Date().getFullYear()} Sleep Sound

@@ -4,10 +4,12 @@ import api from "../api";
 import { CalendarDays, CreditCard, Phone, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import API from "../api";
 
 const MyOrder = () => {
-    const { isLoggedIn, token, userId, logout } = useCart();
+    const { isLoggedIn, logout,token } = useCart();
     const navigate = useNavigate();
+
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [cancellingOrderId, setCancellingOrderId] = useState(null);
@@ -15,51 +17,54 @@ const MyOrder = () => {
     const [confirmCancel, setConfirmCancel] = useState(null);
     const [emailInput, setEmailInput] = useState("");
 
-    // Handle session expiration
+    // 🔹 Handle expired session globally
     const handleSessionExpiration = () => {
         toast.error("Session expired. Please login again.");
         logout();
         navigate("/login");
     };
 
+    // console.log(token)
+
+    // 🔹 Fetch orders
     useEffect(() => {
         const fetchOrders = async () => {
-            // console.log("📌 fetchOrders called");
             setLoading(true);
             try {
                 let allOrders = [];
 
-                // 1. Get guest orders from localStorage
-                const guestOrders = JSON.parse(localStorage.getItem("guestOrders") || "[]")
-                    .map((order, index) => ({
+                // Load guest orders (local fallback)
+                const guestOrders = JSON.parse(localStorage.getItem("guestOrders") || "[]").map(
+                    (order, index) => ({
                         ...order,
                         _id: order._id || `guest-${Date.now()}-${index}`,
                         isGuest: true,
-                        createdAt: order.date || new Date().toISOString()
-                    }));
+                        createdAt: order.date || new Date().toISOString(),
+                    })
+                );
 
-                // console.log("Auth state:", { isLoggedIn, token, userId });
-    
-                if (isLoggedIn && token && userId) {
+                // console.log("🔐 isLoggedIn (context):", isLoggedIn);
+
+                if (isLoggedIn) {
                     try {
-                        console.log("📌 Making API call with token:", token);
+                        const res = await API.get("/orders/my", { withCredentials: true });
 
-                        const res = await api.get("/orders/my");
+                        // console.log("✅ Fetched user orders:", res.data);
 
-                        // console.log("Fetched orders:", res.data);
+                        const userOrdersRaw = Array.isArray(res.data)
+                            ? res.data
+                            : res.data.orders || [];
 
-                        // Some APIs return { orders: [...] }, others return just [...]
-                        const userOrdersRaw = Array.isArray(res.data) ? res.data : res.data.orders || [];
-
-                        const userOrders = userOrdersRaw.map(order => ({
+                        const userOrders = userOrdersRaw.map((order) => ({
                             ...order,
                             isGuest: false,
-                            createdAt: order.createdAt || order.date || new Date().toISOString()
+                            createdAt:
+                                order.createdAt || order.date || new Date().toISOString(),
                         }));
 
                         allOrders = [...userOrders, ...guestOrders];
                     } catch (error) {
-                        // console.error("❌ Error fetching user orders:", error.response?.data || error.message);
+                        // console.error("❌ Error fetching user orders:", error.response?.data || error);
                         if (error.response?.status === 401) {
                             handleSessionExpiration();
                         }
@@ -70,12 +75,8 @@ const MyOrder = () => {
                     allOrders = [...guestOrders];
                 }
 
-                // Sort by date (newest first)
-                allOrders.sort((a, b) => {
-                    const dateA = new Date(a.createdAt);
-                    const dateB = new Date(b.createdAt);
-                    return dateB - dateA;
-                });
+                // Sort newest first
+                allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 setOrders(allOrders);
             } catch (error) {
@@ -87,15 +88,21 @@ const MyOrder = () => {
         };
 
         fetchOrders();
-    }, [isLoggedIn, token, userId]);
+    }, [isLoggedIn]);
 
+    // 🔹 Delivery date estimator
     const getEstimatedDelivery = (dateStr) => {
         const orderDate = dateStr ? new Date(dateStr) : new Date();
-        const minDays = 3;
-        const maxDays = 5;
+        const minDays = 3, maxDays = 5;
         const estimatedMin = new Date(orderDate.getTime() + minDays * 24 * 60 * 60 * 1000);
         const estimatedMax = new Date(orderDate.getTime() + maxDays * 24 * 60 * 60 * 1000);
-        return `${estimatedMin.toLocaleDateString("en-IN", { day: "numeric", month: "short" })} - ${estimatedMax.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`;
+        return `${estimatedMin.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+        })} - ${estimatedMax.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+        })}`;
     };
 
     const toggleExpandOrder = (orderId) => {
@@ -103,54 +110,38 @@ const MyOrder = () => {
     };
 
     const handleCancelOrder = async (orderId) => {
-        const order = orders.find(o => o._id === orderId);
+        const order = orders.find((o) => o._id === orderId);
         if (!order) return;
 
         setCancellingOrderId(orderId);
+        console.log(orderId)
 
         try {
-            // Handle guest orders (frontend only)
-            if (order.isGuest || orderId.startsWith('guest-')) {
+            if (order.isGuest || orderId.startsWith("guest-")) {
                 if (!order.address?.email) {
                     toast.error("This guest order cannot be cancelled as it has no email");
                     return;
                 }
 
-                // Update localStorage and state
-                const updatedOrders = orders.filter(o => o._id !== orderId);
-                localStorage.setItem('guestOrders',
-                    JSON.stringify(updatedOrders.filter(o => o.isGuest)));
+                // Update localStorage and UI
+                const updatedOrders = orders.filter((o) => o._id !== orderId);
+                localStorage.setItem(
+                    "guestOrders",
+                    JSON.stringify(updatedOrders.filter((o) => o.isGuest))
+                );
                 setOrders(updatedOrders);
                 toast.success("Guest order cancelled");
-            }
-            // Handle backend orders (both user and guest)
-            else {
-                const config = {
-                    headers: isLoggedIn && token ? { Authorization: `Bearer ${token}` } : {}
-                };
-
-                // For guest orders in backend (user: null)
-                if (!order.user) {
-                    if (!order.address?.email) {
-                        toast.error("This order cannot be cancelled as it has no email");
-                        return;
-                    }
-                    config.data = { email: order.address.email };
-                }
-
-                await api.delete(`/orders/${orderId}`, config);
-                setOrders(prev => prev.filter(o => o._id !== orderId));
+            } else {
+                await API.delete(`/orders/${orderId}`, { withCredentials: true });
+                setOrders((prev) => prev.filter((o) => o._id !== orderId));
                 toast.success("Order cancelled successfully");
             }
         } catch (error) {
-            console.error("Cancellation failed:", error);
-
+            // console.error("Cancellation failed:", error);
             if (error.response?.status === 401) {
                 handleSessionExpiration();
-            } else if (error.response?.data?.code === "EMAIL_MISMATCH") {
-                toast.error("Email verification failed");
             } else {
-                toast.error(error.response?.data?.error || "Failed to cancel order");
+                toast.error(error.response?.data?.error);
             }
         } finally {
             setCancellingOrderId(null);

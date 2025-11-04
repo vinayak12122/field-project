@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import api from "../api";
+import api, { setAccessToken } from "../api";
 import { useCart } from "../context/CartContext";
 import { HashLoader } from "react-spinners";
 
@@ -41,20 +41,15 @@ export default function Login({ onGoogleAuth,isMobile }) {
 
         try {
             const res = await api.post("/auth/login", { email, password });
-            const { accessToken, user, expiresIn } = res.data;
+            // console.log(res.data.accessToken);
 
-            // ✅ Save token so interceptor can attach it
-            setToken(accessToken);
+            const { user } = res.data;
             setIsLoggedIn(true);
-
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("expiresIn", expiresIn);
-            localStorage.setItem("user", JSON.stringify(user));
-
-            // ✅ If cart has items (saved in context before login), sync them
+            setAccessToken(res.data.accessToken); 
+            // toast.success(`Welcome back, ${user.name}`);
             if (cart.length > 0) {
                 await Promise.all(
-                    cart.map((item) => api.post("/cart", item)) // interceptor handles Authorization
+                    cart.map((item) => api.post("/cart", item))
                 );
             }
 
@@ -77,7 +72,7 @@ export default function Login({ onGoogleAuth,isMobile }) {
 
     return (
         <div
-            className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-white to-cyan-200 overflow-hidden bg-cover bg-center"
+            className="relative min-h-screen flex items-center justify-center from-pink-200 via-white to-cyan-200 overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
         >
             <motion.div
@@ -97,7 +92,7 @@ export default function Login({ onGoogleAuth,isMobile }) {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
                         transition={{ type: "spring", stiffness: 100 }}
-                        className={`relative z-10 w-full max-w-md bg-white backdrop-blur-2xl rounded-2xl shadow-2xl p-8 border border-transparent bg-clip-padding border-gradient-to-r from-pink-400 to-cyan-400 transition-all ${error ? "animate-shake" : ""
+                        className={`relative z-10 ${isMobile ? "h-screen w-screen flex flex-col justify-center ":"w-full max-w-md rounded-2xl"} bg-white backdrop-blur-2xl shadow-2xl p-8 border border-transparent bg-clip-padding border-gradient-to-r from-pink-400 to-cyan-400 transition-all ${error ? "animate-shake" : ""
                             }`}
                     >
                         <div className="flex w-full justify-center" onClick={()=>navigate('/')}>
@@ -155,7 +150,7 @@ export default function Login({ onGoogleAuth,isMobile }) {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.97 }}
                                 disabled={loading}
-                                className="mt-2 w-full py-3 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold rounded-xl shadow-lg transition relative cursor-pointer"
+                                className="mt-2 w-full py-3 bg-red-500 border border-amber-950 text-white font-semibold rounded-xl shadow-lg transition relative cursor-pointer"
                             >
                                 {loading ? (
                                     <span className="flex items-center justify-center gap-2">

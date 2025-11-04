@@ -209,6 +209,7 @@ export default function AddAddress() {
           <input
             type="tel"
             name="phone"
+            maxLength={10}
             value={form.phone}
             onChange={handleChange}
             placeholder="Phone Number"

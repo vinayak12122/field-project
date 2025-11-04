@@ -3,8 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import API from "../api"; // ✅ use your current setup
 import { ArrowLeft, Wallet, CreditCard, Loader } from "lucide-react";
 
 const Confetti = () => (
@@ -77,8 +76,9 @@ const SuccessAnimation = () => (
 const steps = ["Cart", "Address", "Contact", "Payment"];
 
 const BuyingDetails = () => {
-  const { cart, clearCart, isLoggedIn, isGuest, token, parsePrice } = useCart();
+  const { cart, clearCart, isLoggedIn, parsePrice } = useCart();
   const navigate = useNavigate();
+
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     room: "",
@@ -90,7 +90,6 @@ const BuyingDetails = () => {
     altPhone: "",
     email: "",
   });
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -100,10 +99,7 @@ const BuyingDetails = () => {
     if (savedAddress) {
       try {
         const parsed = JSON.parse(savedAddress);
-        setForm((prev) => ({
-          ...prev,
-          ...parsed, 
-        }));
+        setForm((prev) => ({ ...prev, ...parsed }));
       } catch (err) {
         console.error("Failed to parse saved address:", err);
       }
@@ -112,7 +108,6 @@ const BuyingDetails = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // console.log(`Input change: ${name} = ${value}`);
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -142,47 +137,32 @@ const BuyingDetails = () => {
   };
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 0));
-
-  const handleBackNavigation = () => {
-    if (step === 0) navigate("/cart");
-    else prevStep();
-  };
+  const handleBackNavigation = () =>
+    step === 0 ? navigate("/cart") : prevStep();
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const orderData = {
         items: cart.map((i) => ({
+          productId: i.productId,
           title: i.title,
           quantity: i.quantity,
           price: parsePrice(i.price),
         })),
         address: { ...form },
         paymentMethod: "Cash on Delivery",
-        isGuest,
       };
 
-      if (isLoggedIn && !isGuest) {
-        const { exp } = jwtDecode(token);
-        if (Date.now() >= exp * 1000) throw new Error("Session expired");
-        await axios.post(
-          "https://field-project-6hka.onrender.com/api/orders/create",
-          orderData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          }
-        );
+      // console.log("isLoggedIn (global):", isLoggedIn);
+
+      if (isLoggedIn) {
+        await API.post("/orders/create", orderData, { withCredentials: true });
       } else {
-        await axios.post(
-          "https://field-project-6hka.onrender.com/api/orders/create",
-          orderData);
+        const stored = JSON.parse(localStorage.getItem("guestOrders") || "[]");
         localStorage.setItem(
           "guestOrders",
-          JSON.stringify([
-            ...JSON.parse(localStorage.getItem("guestOrders") || "[]"),
-            orderData,
-          ])
+          JSON.stringify([...stored, orderData])
         );
       }
 
@@ -190,14 +170,14 @@ const BuyingDetails = () => {
       clearCart();
       setTimeout(() => navigate("/shop"), 2500);
     } catch (err) {
-      toast.error(err.message || "Failed to place order.");
+      toast.error(err.response?.data?.message || "Failed to place order.");
+      // console.error("Order error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const StepContent = useMemo(() => {
-    // console.log("Rendering StepContent for step:", step);
     switch (step) {
       case 0:
         return (
@@ -205,9 +185,9 @@ const BuyingDetails = () => {
             <h2 className="font-bold mb-4">Your Items</h2>
             <ul className="space-y-2">
               {cart.map((item) => (
-                <li key={item.title} className="flex justify-between">
+                <li key={item.productId} className="flex justify-between">
                   <span>
-                    {item.title} ×{item.quantity}
+                    {item.title} × {item.quantity}
                   </span>
                   <span>
                     ₹{(parsePrice(item.price) * item.quantity).toLocaleString()}
@@ -251,9 +231,7 @@ const BuyingDetails = () => {
                 className={`w-full border px-3 py-2 rounded ${errors.phone ? "border-red-500" : "border-gray-300"
                   }`}
               />
-              {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone}</p>
-              )}
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
             </div>
             <div>
               <input
@@ -266,9 +244,7 @@ const BuyingDetails = () => {
                   }`}
                 required={!isLoggedIn}
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
           </div>
         );
@@ -300,7 +276,6 @@ const BuyingDetails = () => {
   }, [step, form, errors, cart, parsePrice, isLoggedIn]);
 
   if (success) return <SuccessAnimation />;
-  if (!steps) return null;
 
   return (
     <div className="max-w-xl mx-auto p-4 space-y-6">
@@ -344,7 +319,7 @@ const BuyingDetails = () => {
             disabled={loading}
             className="px-4 py-2 bg-green-500 text-white rounded-lg"
           >
-              {loading ? <Loader size={24} className="animate-spin" /> : "Place Order"}
+            {loading ? <Loader size={24} className="animate-spin" /> : "Place Order"}
           </button>
         )}
       </div>

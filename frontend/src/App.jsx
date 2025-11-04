@@ -25,13 +25,13 @@ import SecurityPolicy from './pages/SecurityPolicy';
 import Support from './pages/Support';
 import Wishlist from './pages/WishList';
 import AddAddress from './components/AddAddress';
-
+import Setting from './pages/Setting';
 
 const App = () => {
 
   const location = useLocation();
 
-  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy', '/securitypolicy', '/support', '/help', '/add-address'].includes(location.pathname);
+  const hideHeader = ["/login", "/signup", "/details", "/about", '/paymentpolicy', '/securitypolicy', '/support', '/help', '/add-address','/settings'].includes(location.pathname);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -64,7 +64,7 @@ const App = () => {
         <Route path='/shop' element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/login" element={<Login isMobile={isMobile} />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup" element={<SignUp isMobile={isMobile}/>} />
         <Route path="/cart" element={<Cart isMobile={isMobile} />} />
         <Route path="/buy" element={<Buy />} />
         <Route path="/trending" element={<Trending />} />
@@ -77,6 +77,7 @@ const App = () => {
         <Route path='/support' element={<Support />} />
         <Route path='/wishlist' element={<Wishlist />} />
         <Route path='/add-address' element={<AddAddress />} />
+        <Route path='/settings' element={<Setting/>}/>
       </Routes>
       <Toaster
         position="top-center"

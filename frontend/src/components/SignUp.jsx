@@ -16,7 +16,7 @@ const LoaderAnimation = () => (
     </div>
 );
 
-export default function SignUp({ onGoogleAuth }) {
+export default function SignUp({ onGoogleAuth ,isMobile}) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -112,8 +112,8 @@ export default function SignUp({ onGoogleAuth }) {
                         exit={{ opacity: 0, scale: 0.9 }}
                         whileHover={{ rotateX: 3, rotateY: -3 }}
                         transition={{ type: "spring", stiffness: 100 }}
-                        className={`relative z-10 w-full max-w-md 
-            bg-white backdrop-blur-2xl rounded-2xl shadow-2xl 
+                        className={`relative z-10 ${isMobile ? "h-screen w-screen flex flex-col justify-center " : "w-full max-w-md rounded-2xl"} 
+            bg-white backdrop-blur-2xl shadow-2xl 
             p-8 border border-transparent 
             bg-clip-padding border-gradient-to-r from-pink-400 to-cyan-400
             transition-all
@@ -141,17 +141,6 @@ export default function SignUp({ onGoogleAuth }) {
                             </span>
                         </button> */}
 
-                        {/* Divider */}
-                        <div className="relative my-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <span className="w-full border-t border-gray-300"></span>
-                            </div>
-                            {/* <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white/80 px-2 text-gray-500">
-                                    or sign up with email
-                                </span>
-                            </div> */}
-                        </div>
 
                         {/* Form */}
                         <form onSubmit={handleSignup} className="space-y-5">
@@ -254,7 +243,7 @@ export default function SignUp({ onGoogleAuth }) {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.97 }}
                                 disabled={loading}
-                                className="mt-2 w-full py-3 bg-gradient-to-r from-pink-500 to-cyan-400 
+                                className="mt-2 w-full py-3 bg-red-500 border border-amber-950
                 text-white font-semibold rounded-xl shadow-lg transition relative"
                             >
                                 {loading ? (

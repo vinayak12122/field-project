@@ -1,55 +1,71 @@
 import axios from "axios";
 
-const api = axios.create({
+let accessToken = null;
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach((prom) => {
+        if (error) prom.reject(error);
+        else prom.resolve(token);
+    });
+    failedQueue = [];
+};
+
+const API = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
 
-
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+API.interceptors.request.use((config) => {
+    // console.log("🔐 Sending request with token:", accessToken);
+    if (accessToken && accessToken !== "null") {
+        config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
 });
 
-// Response interceptor
-api.interceptors.response.use(
+API.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
 
-        // Only handle 401 errors for expired tokens (ignore login/refresh failures)
-        if (error.response?.status === 401 &&
-            !originalRequest._retry &&
-            !originalRequest.url.includes('/auth/refresh')) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({ resolve, reject });
+                })
+                    .then((token) => {
+                        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+                        return API(originalRequest);
+                    })
+                    .catch((err) => Promise.reject(err));
+            }
 
             originalRequest._retry = true;
+            isRefreshing = true;
 
             try {
-                // 1. Attempt refresh
                 const res = await axios.post(
-                    `${originalRequest.baseURL}/auth/refresh`,
+                    `${import.meta.env.VITE_API_URL}/auth/refresh`,
                     {},
                     { withCredentials: true }
                 );
 
-                // 2. Store new token
-                const newAccessToken = res.data.accessToken;
-                localStorage.setItem("accessToken", newAccessToken);
+                const newToken = res.data.token;
+                accessToken = newToken;
 
-                // 3. Update current request header
-                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                processQueue(null, newToken);
 
-                // 4. Retry request
-                return api(originalRequest);
+                // Retry original request
+                originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+                return API(originalRequest);
             } catch (refreshError) {
-                // 5. If refresh fails, clear all auth data
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("user");
-                window.location.href = "/login?session_expired=1";
+                processQueue(refreshError, null);
+                accessToken = null;
                 return Promise.reject(refreshError);
+            } finally {
+                isRefreshing = false;
             }
         }
 
@@ -57,4 +73,8 @@ api.interceptors.response.use(
     }
 );
 
-export default api;
+export const setAccessToken = (token) => {
+    accessToken = token;
+}
+
+export default API;
