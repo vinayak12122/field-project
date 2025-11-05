@@ -297,11 +297,11 @@ const BuyingDetails = () => {
         </motion.div>
       </AnimatePresence>
 
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-4 items-center">
         {step > 0 && (
           <button
             onClick={prevStep}
-            className="px-4 py-2 bg-gray-300 rounded-lg cursor-pointer"
+            className="px-4 py-2 mb-4 bg-gray-300 rounded-lg cursor-pointer"
           >
             Back
           </button>
