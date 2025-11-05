@@ -68,7 +68,7 @@ const ProductList = () => {
 
     return (
         <div
-            className="bg-gray-50 py-20 bg-cover bg-center"
+            className="bg-gray-50/40 py-20 bg-cover bg-center"
             style={{ backgroundImage: "url('bg-img.png')" }}
         >
             {/* <div className="overflow-hidden relative mb-6 mt-6 mx-4 top-8 font-bold text-gray-700 bg-white shadow-md">

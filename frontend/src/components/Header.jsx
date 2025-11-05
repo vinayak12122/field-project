@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, Settings, ShoppingBag } from "lucide-react";
+import { ArrowLeft, BadgeInfo, Edit3, HeadsetIcon, Heart, HeartHandshakeIcon, LogOut, LucideBadgeIndianRupee, MapPin, MenuIcon, PackageCheck, PhoneCall, ReceiptIndianRupeeIcon, ReceiptTextIcon, Search, Settings, ShoppingBag } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { datasets } from "../data";
 import { useRef } from "react";
 import API, { setAccessToken } from "../api";
 import { motion, AnimatePresence } from "framer-motion";
+import Sidebar from "../pages/Sidebar";
 
 const Header = ({ isMobile }) => {
   const { isLoggedIn, cart } = useCart();
@@ -112,6 +113,16 @@ const Header = ({ isMobile }) => {
   const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "");
 
   const isHome = location.pathname === "/";
+
+  const handleLogout = async () => {
+    try {
+      await API.post("/auth/logout");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      navigate("/login");
+    }
+  };
 
   const bgClasses = isHome
     ? scrolled || hovered
@@ -481,7 +492,7 @@ const Header = ({ isMobile }) => {
                 </div>
               ) : (
                 <button
-                    className="relative border border-transparent hover:bg-gray-300/20 hover:border-gray-300 hover:border cursor-pointer rounded-md transition-all duration-200 left-5"
+                  className="relative border border-transparent hover:bg-gray-300/20 hover:border-gray-300 hover:border cursor-pointer rounded-md transition-all duration-200 left-5"
                   title="Login"
                   onClick={() => navigate("/login")}
                 >
@@ -535,131 +546,7 @@ const Header = ({ isMobile }) => {
             onClick={() => setSideBarOpen(true)}
           />
 
-          <div
-            onClick={() => setSideBarOpen(false)}
-            className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998] 
-      transition-opacity duration-300 ease-in-out
-      ${sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
-          ></div>
-
-          <div
-            className={`fixed top-0 right-0 ${isMobile ? "w-full" : "w-[320px]"} h-full
-    bg-gradient-to-b from-white via-gray-50 to-gray-100 shadow-2xl z-[9999]
-    flex flex-col transform transition-transform duration-500 ease-in-out
-    ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
-          >
-            <div className="items-center justify-between px-6 py-4 border-b bg-white/80 backdrop-blur-lg">
-              <div className="flex justify-between">
-                <img src="logo.png" className="w-30 scale-180 h-14 object-contain drop-shadow-md" alt="Logo" />
-                <button
-                  onClick={() => setSideBarOpen(false)}
-                  className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className=" flex w-full mt-3 justify-between gap-2">
-                {user &&
-                  <p className="p-2 bg-red-200/30 border border-gray-200 text-black/70 rounded-md w-full">{user?.name}</p>
-                }
-                {!user &&
-                  <div onClick={() => navigate('/login')}
-                    className="p-2 bg-gray-300/20 border border-gray-300 text-black/70 rounded-md w-full hover:bg-gray-300/30 cursor-pointer"
-                  >
-                    Login
-                  </div>
-                }
-              </div>
-            </div>
-            <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-3 font-medium">
-              {sidebarLinks.map((item) => {
-                const isExpandable = item.isExpandable;
-                const isOpen = item.label === "Contact Us" ? showContact : showCoins;
-
-                return (
-                  <div key={item.label}>
-                    <button
-                      onClick={() => {
-                        if (item.link) {
-                          setSideBarOpen(false);
-                          navigate(item.link);
-                        } else {
-                          if (item.label === "Contact Us") setShowContact((prev) => !prev);
-                          if (item.label === "Winning Coins") setShowCoins((prev) => !prev);
-                        }
-                      }}
-                      className="group flex items-center justify-between w-full px-5 py-4 rounded-xl
-            bg-white shadow-sm hover:shadow-md
-            hover:bg-black/5 border border-gray-300 transition-all duration-300"
-                    >
-                      <span className="flex items-center gap-4">
-                        <span className={`p-2 rounded-lg ${colorClasses[item.color]}`}>
-                          {item.icon}
-                        </span>
-                        {item.label}
-                      </span>
-                      {isExpandable && <span className={`transition-transform ${isOpen ? "rotate-90" : ""}`}>›</span>}
-                    </button>
-
-                    {item.label === "Contact Us" && (
-                      <div className={`ml-6 mt-3 space-y-2 text-sm text-gray-700 overflow-hidden
-  ${showContact ? "max-h-96 animate-slideFade show" : "max-h-0 animate-slideFade"}`}>
-                        <a
-                          href="https://wa.me/919876543210"
-                          target="_blank"
-                          className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
-                        >
-                          WhatsApp: 1234567890
-                        </a>
-                        <a
-                          href="tel:+911234567890"
-                          className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
-                        >
-                          Call: +91 1234567890
-                        </a>
-                        <a
-                          href="mailto:support@nayaanenterprise.com"
-                          className="block w-full px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600"
-                        >
-                          Email: ne@gmail.com
-                        </a>
-                      </div>
-                    )}
-
-                    {item.label === "Winning Coins" && (
-                      <div
-                        className={`ml-6 mt-3 space-y-2 text-sm text-gray-700 transition-all duration-500 overflow-hidden 
-    ${showCoins ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
-                      >
-                        <p>
-                          Your Coins: <span className="font-bold text-orange-600">0</span>
-                        </p>
-                        <p>Collect coins by booking and redeem for discounts soon!</p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              {user && (<div
-                className="relative group flex items-center justify-between w-full px-5 py-4 rounded-xl
-              bg-white shadow-sm hover:shadow-md
-              hover:bg-black/5 border border-gray-300 transition-all duration-300"
-                onClick={() => {
-                  navigate("/settings");
-                }}
-              >
-                <span className="flex items-center cursor-pointer gap-4">
-                  <span className="p-2 rounded-lg bg-gray-100 text-gray-600 group-hover:bg-white group-hover:text-gray-600">
-                    <Settings color="gray" />
-                  </span>
-                  <span className="font-medium">Settings</span>
-                </span>
-              </div>)}
-            </nav>
-            <div className="px-6 py-4 border-t text-xs text-gray-500 bg-white/80 backdrop-blur-lg">
-              © {new Date().getFullYear()} Sleep Sound
-            </div>
-          </div>
+          <Sidebar setSideBarOpen={setSideBarOpen} sidebarOpen={sidebarOpen} isMobile={isMobile} showCoins={showCoins} sidebarLinks={sidebarLinks} user={user} navigate={navigate} setShowCoins={setShowCoins} showContact={showContact} setShowContact={setShowContact} handleLogout={handleLogout}/>
         </div>
       </div >
     </div>

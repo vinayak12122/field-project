@@ -27,12 +27,8 @@ const Trending = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="p-8 py-40 bg-slate-400/20" 
+    <section className="p-8 py-40 bg-gray-50/40" 
     >
-      <h2 className="text-3xl mb-6 text-start font-cinzel bg-white inline-block  px-4 py-2
-       drop-shadow-lg">
-        Trending Section
-      </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {showcaseProducts.map((product, idx) => (
           <div

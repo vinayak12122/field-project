@@ -25,7 +25,7 @@ import SecurityPolicy from './pages/SecurityPolicy';
 import Support from './pages/Support';
 import Wishlist from './pages/WishList';
 import AddAddress from './components/AddAddress';
-import Setting from './pages/Setting';
+
 
 const App = () => {
 
@@ -77,7 +77,6 @@ const App = () => {
         <Route path='/support' element={<Support />} />
         <Route path='/wishlist' element={<Wishlist />} />
         <Route path='/add-address' element={<AddAddress />} />
-        <Route path='/settings' element={<Setting/>}/>
       </Routes>
       <Toaster
         position="top-center"
