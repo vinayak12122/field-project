@@ -181,7 +181,7 @@ const BuyingDetails = () => {
     switch (step) {
       case 0:
         return (
-          <div>
+          <div className="overflow-hidden">
             <h2 className="font-bold mb-4">Your Items</h2>
             <ul className="space-y-2">
               {cart.map((item) => (
@@ -278,7 +278,7 @@ const BuyingDetails = () => {
   if (success) return <SuccessAnimation />;
 
   return (
-    <div className="max-w-xl mx-auto p-4 space-y-6">
+    <div className="max-w-xl mx-auto p-4 overflow-hidden space-y-6">
       <div className="flex items-center gap-4">
         <ArrowLeft className="cursor-pointer" onClick={handleBackNavigation} />
         <h1 className="text-xl font-bold">{steps[step]}</h1>
@@ -309,7 +309,7 @@ const BuyingDetails = () => {
         {step < steps.length - 1 ? (
           <button
             onClick={nextStep}
-            className="px-4 py-2 bg-sky-900 text-white rounded-lg cursor-pointer"
+            className="px-4 py-2 bg-sky-900 mb-4 text-white rounded-lg cursor-pointer"
           >
             Next
           </button>
@@ -324,8 +324,8 @@ const BuyingDetails = () => {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center p-4">
-        <img src="logo.png" className="w-50 h-auto max-h-40" alt="Company Logo" />
+      <div className="absoulte bottom-0 left-0 right-0 w-full max-h-40 flex justify-center items-center p-4">
+        <img src="logo.png" className="w-30 h-auto" alt="Company Logo" />
       </div>
     </div>
   );
