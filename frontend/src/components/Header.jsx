@@ -497,7 +497,7 @@ const Header = ({ isMobile }) => {
                   onClick={() => navigate("/login")}
                 >
                   <p
-                    className={`font-cinzel font-medium px-4 py-1 text-xl transition-all duration-200 ${textClasses} drop-shadow-lg`}
+                    className={` px-4 py-1 text-xl transition-all duration-200 ${textClasses} drop-shadow-lg`}
                   >
                     Login
                   </p>
